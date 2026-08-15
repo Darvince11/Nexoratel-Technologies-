@@ -2,6 +2,12 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  # SMTP_USER's value is the company's public contact email, which is
+  # intentionally displayed on the Contact page and in the chat assistant's
+  # context. It is not a leaked secret, so it's excluded from scanning.
+  SECRETS_SCAN_OMIT_KEYS = "SMTP_USER"
+
 [functions]
   directory = "netlify/functions"
 
