@@ -48,7 +48,7 @@ export default function Footer() {
             <img 
               src={fullLogo} 
               alt="Nexoratel Technologies Logo" 
-              style={{ height: '52px', width: 'auto', display: 'block', filter: 'brightness(0) invert(1)' }} 
+              style={{ height: '150px', width: 'auto', display: 'block', filter: 'brightness(0) invert(1)' }} 
             />
           </Link>
           <p style={{ color: '#94a3b8', marginBottom: '25px', lineHeight: '1.6', maxWidth: '280px', fontSize: '0.95rem' }}>

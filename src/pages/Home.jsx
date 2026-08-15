@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TAGLINES = [
   "Engineering The Future.",
@@ -35,6 +36,13 @@ const IconSupportUser = () => (
   </svg>
 );
 
+const CheckCircleIcon = () => (
+  <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+  </svg>
+);
+
 const ENTERPRISE_PILLARS = [
   { icon: <IconShield />, title: "Enterprise Security", subtitle: "ISO-Aligned Defense" },
   { icon: <IconLightning />, title: "Rapid Deployment", subtitle: "Agile CI/CD Pipelines" },
@@ -57,10 +65,10 @@ const IconMobileDev = () => (
   </svg>
 );
 
-const IconCybersecurity = () => (
+const IconDevOps = () => (
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-    <polyline points="9 12 11 14 15 10"></polyline>
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
   </svg>
 );
 
@@ -99,9 +107,9 @@ const CORE_SERVICES = [
     desc: "High-performance native and cross-platform mobile apps engineered for fluid user experiences across iOS and Android." 
   },
   { 
-    icon: <IconCybersecurity />, 
-    title: "Cybersecurity & DevOps", 
-    desc: "Rigorous system vulnerability testing, automated CI/CD cloud pipelines, and ISO-aligned infrastructure defense." 
+    icon: <IconDevOps />, 
+    title: "DevOps & CI/CD Automation", 
+    desc: "Automated deployment pipelines, container orchestration, and infrastructure-as-code for rapid, reliable releases." 
   },
   { 
     icon: <IconNetworking />, 
@@ -149,7 +157,13 @@ function AnimatedCounter({ end, suffix = "" }) {
 }
 
 export default function Home() {
+  const navigate = useNavigate();
+  const contactSectionRef = useRef(null);
+
   const [currentLine, setCurrentLine] = useState(0);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [status, setStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     document.title = "Nexoratel Technologies | Elite Software Development & UI/UX Agency";
@@ -168,6 +182,41 @@ export default function Home() {
     }, 4000);
     return () => clearInterval(timer);
   }, []);
+
+  const scrollToContact = () => {
+    contactSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('submitting');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      } else {
+        setStatus('error');
+        setErrorMessage(data.error || 'Something went wrong. Please try again.');
+      }
+    } catch {
+      setStatus('error');
+      setErrorMessage('Could not connect to the mail server. Please try again later.');
+    }
+  };
 
   const topServices = CORE_SERVICES.slice(0, 3);
   const bottomServices = CORE_SERVICES.slice(3, 6);
@@ -194,6 +243,25 @@ export default function Home() {
           align-items: center;
           gap: 40px;
         }
+        .modern-input-field {
+          width: 100%;
+          padding: 16px 20px;
+          border-radius: 12px;
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+          font-size: 1rem;
+          color: #334155;
+          margin-bottom: 18px;
+          transition: all 0.3s ease;
+          font-family: inherit;
+          box-sizing: border-box;
+        }
+        .modern-input-field:focus {
+          outline: none;
+          border-color: var(--brand-blue);
+          background: #ffffff;
+          box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+        }
         @media (max-width: 992px) {
           .hero-grid {
             grid-template-columns: 1fr;
@@ -213,7 +281,7 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Hero Section with Responsive Stacking and Scaled-down Mobile Mockup */}
+      {/* Hero Section */}
       <section style={{ 
         minHeight: '85vh', 
         display: 'flex', 
@@ -241,8 +309,21 @@ export default function Home() {
             </p>
             
             <div className="responsive-cta-group" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-              <button className="btn-solid-blue">Start a Project</button>
-              <button className="btn-outline-blue" style={{ color: '#ffffff', borderColor: '#ffffff' }}>Explore Products</button>
+              <button 
+                className="btn-solid-blue" 
+                onClick={scrollToContact}
+                style={{ cursor: 'pointer' }}
+              >
+                Start a Project
+              </button>
+              
+              <button 
+                className="btn-outline-blue" 
+                onClick={() => navigate('/products')} 
+                style={{ color: '#ffffff', borderColor: '#ffffff', cursor: 'pointer' }}
+              >
+                Explore Products
+              </button>
             </div>
           </div>
           
@@ -349,7 +430,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sleek Enterprise Value Pillars */}
+      {/* Enterprise Value Pillars */}
       <section className="container" style={{ paddingBottom: '60px', paddingTop: '20px' }}>
         <div className="grid-4">
           {ENTERPRISE_PILLARS.map((pillar, idx) => (
@@ -367,7 +448,7 @@ export default function Home() {
       </section>
 
       {/* Dynamic Animated Statistics Section */}
-      <section style={{ background: 'var(--bg-alt)', padding: '70px 0' }}>
+      <section style={{ background: 'var(--bg-alt)', paddingTop: '60px', paddingBottom: '40px' }}>
         <div className="container">
           <div className="grid-3">
             <div className="modern-card" style={{ padding: '40px 24px', textAlign: 'center', background: '#ffffff' }}>
@@ -388,29 +469,129 @@ export default function Home() {
         </div>
       </section>
 
-      {/* High-Converting Contact Section */}
-      <section className="py-20" style={{ position: 'relative' }}>
+      {/* High-Converting Contact / Book Us Section (Tightened Spacing & Top-Aligned) */}
+      <section ref={contactSectionRef} id="get-in-touch" style={{ position: 'relative', paddingTop: '40px', paddingBottom: '80px' }}>
         <div className="glow-orb blue" style={{ bottom: '10%', right: '10%', opacity: 0.15 }}></div>
-        <div className="container grid-2" style={{ alignItems: 'center' }}>
-          <div>
-            <span style={{ color: 'var(--brand-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>Get In Touch</span>
-            <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 3.8rem)', marginTop: '10px', marginBottom: '20px', lineHeight: 1.08 }}>Let's build<br/>something <span style={{ color: 'var(--brand-blue)' }}>extraordinary.</span></h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.15rem', lineHeight: '1.6', maxWidth: '500px' }}>
+        <div className="container grid-2" style={{ alignItems: 'start', gap: '50px' }}>
+          
+          {/* Left Text Column */}
+          <div style={{ paddingTop: '10px' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '6px 16px',
+              borderRadius: '30px',
+              background: 'rgba(14, 165, 233, 0.1)',
+              border: '1px solid rgba(14, 165, 233, 0.25)',
+              color: 'var(--brand-blue)',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '1.2px',
+              fontSize: '0.8rem',
+              marginBottom: '14px'
+            }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-blue)' }}></span>
+              BOOK US NOW
+            </div>
+
+            <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 3.6rem)', marginTop: '4px', marginBottom: '20px', lineHeight: 1.1, color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
+              Book Us Now & Build <span style={{ color: 'var(--brand-blue)' }}>Extraordinary.</span>
+            </h2>
+            
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.15rem', lineHeight: '1.7', maxWidth: '500px' }}>
               Partner with Nexoratel Technologies today to discuss your next digital product. Our senior engineering consultants are ready to turn your vision into production code.
             </p>
           </div>
           
-          <form action="https://formspree.io/f/your_formspree_id" method="POST" className="modern-card fade-in-up" style={{ padding: '35px', background: '#ffffff' }}>
-            <input type="text" name="_gotcha" style={{ display: 'none' }} />
+          {/* Right Form Column */}
+          <div className="modern-card fade-in-up" style={{ padding: '40px', background: '#ffffff', position: 'relative', overflow: 'hidden', boxShadow: '0 15px 35px rgba(0, 0, 0, 0.06)' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '5px', background: 'var(--brand-blue)' }}></div>
             
-            <h3 style={{ marginBottom: '25px', fontSize: '1.8rem' }}>Start Your Journey</h3>
-            
-            <input type="text" name="name" className="modern-input" placeholder="Your Full Name" required />
-            <input type="email" name="email" className="modern-input" placeholder="Work Email Address" required />
-            <textarea name="message" className="modern-input" placeholder="Tell us about your project goals..." rows="5" required style={{ resize: 'none' }}></textarea>
-            
-            <button type="submit" className="btn-solid-blue" style={{ width: '100%', padding: '18px' }}>SUBMIT PROJECT REQUEST</button>
-          </form>
+            {status === 'success' ? (
+              <div style={{ textAlign: 'center', padding: '30px 10px' }}>
+                <div style={{ display: 'inline-flex', marginBottom: '20px' }}>
+                  <CheckCircleIcon />
+                </div>
+                <h3 style={{ fontSize: '1.8rem', color: 'var(--text-main)', marginBottom: '12px', fontWeight: 800 }}>Message Sent Successfully!</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.6', maxWidth: '420px', margin: '0 auto 30px auto' }}>
+                  Thank you for reaching out. We have received your project details and an automated confirmation has been sent to your email.
+                </p>
+                <button 
+                  onClick={() => setStatus('idle')} 
+                  className="btn-outline-blue" 
+                  style={{ padding: '14px 28px', cursor: 'pointer', background: 'transparent', borderRadius: '10px', fontWeight: 600 }}>
+                  Send Another Message
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <h3 style={{ marginBottom: '8px', fontSize: '1.8rem', color: 'var(--text-main)' }}>Start Your Journey</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '25px' }}>Fill in your details for an immediate consultation.</p>
+
+                {status === 'error' && (
+                  <div style={{ padding: '14px 18px', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '10px', marginBottom: '20px', fontSize: '0.95rem' }}>
+                    {errorMessage}
+                  </div>
+                )}
+                
+                <input 
+                  type="text" 
+                  name="name" 
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="modern-input-field" 
+                  placeholder="Your Full Name" 
+                  required 
+                />
+                
+                <input 
+                  type="email" 
+                  name="email" 
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="modern-input-field" 
+                  placeholder="Work Email Address" 
+                  required 
+                />
+
+                <input 
+                  type="tel" 
+                  name="phone" 
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="modern-input-field" 
+                  placeholder="Phone Number (e.g. +233 50 000 0000)" 
+                  required 
+                />
+                
+                <textarea 
+                  name="message" 
+                  value={formData.message}
+                  onChange={handleChange}
+                  className="modern-input-field" 
+                  placeholder="Tell us about your project goals..." 
+                  rows="4" 
+                  required 
+                  style={{ resize: 'none' }}
+                ></textarea>
+                
+                <button 
+                  type="submit" 
+                  disabled={status === 'submitting'}
+                  className="btn-solid-blue" 
+                  style={{ 
+                    width: '100%', 
+                    padding: '18px',
+                    opacity: status === 'submitting' ? 0.7 : 1,
+                    cursor: status === 'submitting' ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {status === 'submitting' ? 'TRANSMITTING REQUEST...' : 'SUBMIT PROJECT REQUEST'}
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </section>
     </main>

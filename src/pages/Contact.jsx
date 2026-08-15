@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// Premium Minimalist SVG Icons
 const LocationIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -15,6 +14,12 @@ const EmailIcon = () => (
   </svg>
 );
 
+const PhoneIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+  </svg>
+);
+
 const CheckCircleIcon = () => (
   <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -23,7 +28,7 @@ const CheckCircleIcon = () => (
 );
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [status, setStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -48,8 +53,7 @@ export default function Contact() {
     setErrorMessage('');
 
     try {
-      // Point this to your self-hosted backend endpoint
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -59,7 +63,7 @@ export default function Contact() {
 
       if (response.ok) {
         setStatus('success');
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
         setStatus('error');
         setErrorMessage(data.error || 'Something went wrong. Please try again.');
@@ -89,7 +93,7 @@ export default function Contact() {
           display: grid;
           grid-template-columns: 1fr 1.2fr;
           gap: 60px;
-          align-items: start;
+          align-items: center;
         }
 
         .sleek-card {
@@ -173,60 +177,90 @@ export default function Contact() {
         </div>
       </section>
       
-      {/* Contact Channels & Interactive Form Section */}
+      {/* Contact Form Section */}
       <section className="container anim-slide-2" style={{ marginTop: '80px' }}>
         <div className="contact-grid">
           
-          {/* Left Column */}
-          <div>
-            <span style={{ color: 'var(--brand-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>Direct Reach</span>
-            <h2 style={{ fontSize: '2.5rem', marginTop: '10px', marginBottom: '20px', color: 'var(--text-main)', letterSpacing: '-0.5px' }}>Contact Channels</h2>
-            <p style={{ color: 'var(--text-muted)', lineHeight: '1.7', fontSize: '1.05rem', marginBottom: '40px' }}>
-              Reach out through our primary office channels or send us a direct message using the project inquiry form.
-            </p>
+          {/* Left Column: Direct Reach */}
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 16px',
+                borderRadius: '30px',
+                background: 'rgba(14, 165, 233, 0.1)',
+                border: '1px solid rgba(14, 165, 233, 0.25)',
+                color: 'var(--brand-blue)',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '1.2px',
+                fontSize: '0.8rem',
+                marginBottom: '14px'
+              }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-blue)' }}></span>
+                Direct Reach
+              </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div className="sleek-card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.6rem)', marginTop: '6px', marginBottom: '16px', color: 'var(--text-main)', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
+                Contact Channels
+              </h2>
+              
+              <p style={{ color: 'var(--text-muted)', lineHeight: '1.7', fontSize: '1.05rem', margin: 0, maxWidth: '480px' }}>
+                Reach out through our primary office channels or send us a direct message using the project inquiry form.
+              </p>
+            </div>
+
+            {/* Channels Card List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+              <div className="sleek-card" style={{ padding: '22px 24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
                 <div className="icon-wrapper"><LocationIcon /></div>
                 <div>
-                  <h4 style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)', marginBottom: '4px' }}>Global Headquarters</h4>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>Accra, Ghana (Madina / UPSA Area)</p>
+                  <h4 style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-main)', marginBottom: '3px' }}>Headquarters</h4>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>Tema commuinty 6</p>
                 </div>
               </div>
               
-              <div className="sleek-card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div className="sleek-card" style={{ padding: '22px 24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
                 <div className="icon-wrapper"><EmailIcon /></div>
                 <div>
-                  <h4 style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)', marginBottom: '4px' }}>Email Inquiries</h4>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>contact@nexoratel.com</p>
+                  <h4 style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-main)', marginBottom: '3px' }}>Email Inquiries</h4>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>nexorateltechnologies@gmail.com</p>
+                </div>
+              </div>
+
+              <div className="sleek-card" style={{ padding: '22px 24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <div className="icon-wrapper"><PhoneIcon /></div>
+                <div>
+                  <h4 style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-main)', marginBottom: '3px' }}>Phone / WhatsApp</h4>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>+233554167271 <br/> +233509782732</p>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Right Column: Dynamic State Form */}
+          {/* Right Column: Form Container */}
           <div className="sleek-card" style={{ padding: '50px 40px' }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '5px', background: 'var(--brand-blue)' }}></div>
 
             {status === 'success' ? (
-              /* Proof of Submission Card */
               <div style={{ textAlign: 'center', padding: '30px 10px' }} className="anim-slide-1">
                 <div style={{ display: 'inline-flex', marginBottom: '20px' }}>
                   <CheckCircleIcon />
                 </div>
-                <h3 style={{ fontSize: '1.8rem', color: 'var(--text-main)', marginBottom: '12px' }}>Inquiry Received!</h3>
+                <h3 style={{ fontSize: '1.8rem', color: 'var(--text-main)', marginBottom: '12px', fontWeight: 800 }}>Message Sent Successfully!</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.6', maxWidth: '420px', margin: '0 auto 30px auto' }}>
-                  Thank you for submitting your project requirements. Your message has been sent directly to our team, and an email confirmation has been dispatched to your inbox.
+                  Thank you for reaching out. We have received your project requirements and our engineering team will get back to you within 24 hours. A confirmation has been sent to your email.
                 </p>
                 <button 
                   onClick={() => setStatus('idle')} 
                   className="btn-outline-blue" 
-                  style={{ padding: '14px 28px', cursor: 'pointer', background: 'transparent', borderRadius: '10px' }}>
-                  Send Another Inquiry
+                  style={{ padding: '14px 28px', cursor: 'pointer', background: 'transparent', borderRadius: '10px', fontWeight: 600 }}>
+                  Send Another Message
                 </button>
               </div>
             ) : (
-              /* Active Form */
               <form onSubmit={handleSubmit}>
                 <h3 style={{ marginBottom: '8px', fontSize: '1.8rem', color: 'var(--text-main)', letterSpacing: '-0.5px' }}>Project Inquiry</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '30px' }}>Fill out the form below to get a direct consultation.</p>
@@ -237,6 +271,7 @@ export default function Contact() {
                   </div>
                 )}
                 
+                {/* Full Name */}
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Full Name</label>
                   <input 
@@ -250,19 +285,35 @@ export default function Contact() {
                   />
                 </div>
                 
+                {/* Work Email Address */}
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Work Email Address</label>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Email Address</label>
                   <input 
                     type="email" 
                     name="email" 
                     value={formData.email}
                     onChange={handleChange}
                     className="sleek-input" 
-                    placeholder="jane@company.com" 
+                    placeholder="jane@email.com" 
                     required 
                   />
                 </div>
 
+                {/* Phone Number */}
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Phone Number</label>
+                  <input 
+                    type="tel" 
+                    name="phone" 
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="sleek-input" 
+                    placeholder="e.g. +233 50 000 0000" 
+                    required 
+                  />
+                </div>
+
+                {/* Project Goals */}
                 <div style={{ marginBottom: '30px' }}>
                   <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Project Goals</label>
                   <textarea 
@@ -291,7 +342,7 @@ export default function Contact() {
                     cursor: status === 'submitting' ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  {status === 'submitting' ? 'DISPATCHING INQUIRY...' : 'SUBMIT SECURE REQUEST'}
+                  {status === 'submitting' ? 'TRANSMITTING REQUEST...' : 'SUBMIT REQUEST'}
                 </button>
               </form>
             )}

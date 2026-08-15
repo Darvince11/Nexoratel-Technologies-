@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { IconMenu, IconClose } from './Icons';
 
 // Import both the full text logo and the standalone emblem for mobile
@@ -8,6 +8,31 @@ import logoEmblem from '../assets/logo-emblem.png';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleBookUs = () => {
+    setIsOpen(false);
+
+    if (location.pathname === '/') {
+      const section = document.getElementById('get-in-touch');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        const section = document.getElementById('get-in-touch');
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+      }, 150);
+    }
+  };
 
   return (
     <nav style={{ 
@@ -180,7 +205,7 @@ export default function Navbar() {
           <div className="desktop-only">
             <button 
               className="btn-solid-blue" 
-              onClick={() => window.location.href = '/contact'}
+              onClick={handleBookUs}
               style={{ 
                 padding: '10px 22px', 
                 fontSize: '0.8rem', 
@@ -191,7 +216,8 @@ export default function Navbar() {
                 fontWeight: 700,
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease'
               }}
             >
               BOOK US
@@ -227,6 +253,22 @@ export default function Navbar() {
           <NavLink to="/industries" onClick={()=>setIsOpen(false)} style={({isActive}) => ({ color: isActive ? '#ffffff' : '#f8fafc', fontWeight: 500, textDecoration: 'none' })}>Industries</NavLink>
           <NavLink to="/products" onClick={()=>setIsOpen(false)} style={({isActive}) => ({ color: isActive ? '#ffffff' : '#f8fafc', fontWeight: 500, textDecoration: 'none' })}>Products</NavLink>
           <NavLink to="/contact" onClick={()=>setIsOpen(false)} style={({isActive}) => ({ color: isActive ? '#ffffff' : '#f8fafc', fontWeight: 500, textDecoration: 'none' })}>Contact Us</NavLink>
+          
+          <button 
+            onClick={handleBookUs}
+            style={{ 
+              marginTop: '10px',
+              padding: '12px', 
+              background: '#ffffff', 
+              color: '#1d4ed8', 
+              borderRadius: '20px', 
+              fontWeight: 700, 
+              border: 'none', 
+              cursor: 'pointer' 
+            }}
+          >
+            BOOK US
+          </button>
         </div>
       )}
     </nav>

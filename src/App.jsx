@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
+import ChatWidget from './components/ChatWidget';
 
 // Pages
 import Home from './pages/Home';
@@ -64,9 +65,11 @@ export default function App() {
         <Route path="/careers" element={<GenericPage title="Careers" />} />
         <Route path="/faqs" element={<GenericPage title="FAQs" />} />
         
+        
       </Routes>
       <Footer />
       <BackToTop />
+      <ChatWidget />
     </Router>
   );
 }
