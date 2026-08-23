@@ -208,7 +208,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
         model: groqModel,
         messages: [{ role: 'system', content: systemPrompt }, ...messages],
         temperature: 0.5,
-        max_tokens: 120,
+        max_tokens: 300,
       }),
       signal: AbortSignal.timeout(15000),
     });

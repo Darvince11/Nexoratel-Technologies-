@@ -65,7 +65,7 @@ export default async function handler(req, res) {
           ...messages
         ],
         temperature: 0.5,
-        max_tokens: 120,
+        max_tokens: 300,
       }),
     });
 
