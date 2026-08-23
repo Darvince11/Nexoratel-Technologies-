@@ -266,6 +266,7 @@ export default function ChatWidget() {
                 className="chat-bubble-pop"
                 style={{
                   display: 'flex',
+                  minWidth: 0,
                   justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start'
                 }}
               >
@@ -279,7 +280,10 @@ export default function ChatWidget() {
                   lineHeight: '1.5',
                   boxShadow: msg.role === 'user' ? '0 4px 12px rgba(14, 165, 233, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.05)',
                   border: msg.role === 'user' ? 'none' : '1px solid #e2e8f0',
-                  whiteSpace: 'pre-line'
+                  whiteSpace: 'pre-line',
+                  overflowWrap: 'anywhere',
+                  wordBreak: 'break-word',
+                  minWidth: 0
                 }}>
                   {msg.content}
                 </div>
