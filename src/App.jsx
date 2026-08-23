@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
 import ChatWidget from './components/ChatWidget';
+import RouteSeo from './components/RouteSeo';
 
 // Pages
 import Home from './pages/Home';
@@ -17,6 +18,8 @@ import ProductPage from './pages/ProductPage';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';           
 import AmlPolicy from './pages/AmlPolicy';   
+import GhanaLandingPage from './pages/GhanaLandingPage';
+import NotFound from './pages/NotFound';
 
 // A helper to scroll to top on route change
 function ScrollToTop() {
@@ -39,15 +42,19 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
+      <RouteSeo />
       <Navbar />
       <Routes>
         {/* Core Main Pages */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/services/custom-software-development-ghana" element={<GhanaLandingPage page="customSoftware" />} />
+        <Route path="/services/mobile-app-development-ghana" element={<GhanaLandingPage page="mobileApps" />} />
         <Route path="/industries" element={<Industries />} />
         <Route path="/industries/:slug" element={<IndustryDetails />} />
         <Route path="/products" element={<ProductPage />} />
+        <Route path="/products/school-management-system-ghana" element={<GhanaLandingPage page="schoolSystem" />} />
         
         {/* Disabled for now - uncomment when ready to launch */}
         {/* <Route path="/testimonials" element={<Testimonials />} /> */}
@@ -64,6 +71,7 @@ export default function App() {
         <Route path="/why-choose-us" element={<GenericPage title="Why Choose Us" />} />
         <Route path="/careers" element={<GenericPage title="Careers" />} />
         <Route path="/faqs" element={<GenericPage title="FAQs" />} />
+        <Route path="*" element={<NotFound />} />
         
         
       </Routes>

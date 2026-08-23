@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router';
 
 const SERVICES_LIST = [
   { 
@@ -79,14 +80,14 @@ export default function Services() {
   const [selectedSlug, setSelectedSlug] = useState(null);
 
   useEffect(() => {
-    document.title = "Our Services | Nexoratel Technologies - Enterprise Tech Solutions";
+    document.title = "Software Engineering Services in Ghana | Nexoratel Technologies";
     let metaDesc = document.querySelector("meta[name='description']");
     if (!metaDesc) {
       metaDesc = document.createElement('meta');
       metaDesc.name = "description";
       document.head.appendChild(metaDesc);
     }
-    metaDesc.content = "Explore Nexoratel Technologies' comprehensive service offerings including custom software engineering, mobile apps, DevOps, and cloud computing.";
+    metaDesc.content = "Explore custom software, mobile application, DevOps, cloud, networking, and data analytics services for organizations across Ghana.";
   }, []);
 
   // Find active service if a slug is selected
@@ -164,9 +165,9 @@ export default function Services() {
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: 'var(--brand-blue)' }}></div>
             
             <span style={{ color: 'var(--brand-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>Enterprise Expertise</span>
-            <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '10px', marginBottom: '20px', color: 'var(--text-main)' }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '10px', marginBottom: '20px', color: 'var(--text-main)' }}>
               {activeService.title}
-            </h1>
+            </h2>
             
             <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: '1.8', marginBottom: '35px' }}>
               {activeService.longDesc}
@@ -200,11 +201,19 @@ export default function Services() {
                   <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'var(--text-main)' }}>{srv.title}</h3>
                   <p style={{ color: 'var(--text-muted)', lineHeight: '1.7', fontSize: '1.05rem', marginBottom: '25px' }}>{srv.desc}</p>
                 </div>
-                <button 
-                  onClick={() => { setSelectedSlug(srv.slug); window.scrollTo(0, 0); }}
-                  style={{ background: 'transparent', border: 'none', color: 'var(--brand-blue)', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: 0, textAlign: 'left' }}>
-                  Read More →
-                </button>
+                {srv.slug === 'custom-software-engineering' || srv.slug === 'mobile-application-development' ? (
+                  <Link
+                    to={srv.slug === 'custom-software-engineering' ? '/services/custom-software-development-ghana' : '/services/mobile-app-development-ghana'}
+                    style={{ color: 'var(--brand-blue)', fontWeight: 700, fontSize: '0.95rem' }}>
+                    {srv.slug === 'custom-software-engineering' ? 'Explore custom software development in Ghana' : 'Explore mobile app development in Ghana'} →
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => { setSelectedSlug(srv.slug); window.scrollTo(0, 0); }}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--brand-blue)', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: 0, textAlign: 'left' }}>
+                    Read more →
+                  </button>
+                )}
               </div>
             ))}
           </div>

@@ -99,8 +99,8 @@ export default function Footer() {
         <div>
           <h4 style={{ color: '#ffffff', marginBottom: '24px', fontSize: '1.1rem', fontWeight: 700, letterSpacing: '0.5px' }}>Core Services</h4>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <li><Link to="/services" className="footer-link">Custom Software Engineering</Link></li>
-            <li><Link to="/services" className="footer-link">Mobile App Development</Link></li>
+            <li><Link to="/services/custom-software-development-ghana" className="footer-link">Custom Software Development Ghana</Link></li>
+            <li><Link to="/services/mobile-app-development-ghana" className="footer-link">Mobile App Development Ghana</Link></li>
             <li><Link to="/services" className="footer-link">DevOps & CI/CD Automation</Link></li>
             <li><Link to="/services" className="footer-link">Cloud Computing</Link></li>
           </ul>
@@ -110,7 +110,7 @@ export default function Footer() {
           <h4 style={{ color: '#ffffff', marginBottom: '24px', fontSize: '1.1rem', fontWeight: 700, letterSpacing: '0.5px' }}>Digital Solutions</h4>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <li><Link to="/products" className="footer-link">E-Commerce Platforms</Link></li>
-            <li><Link to="/products" className="footer-link">School Management</Link></li>
+            <li><Link to="/products/school-management-system-ghana" className="footer-link">School Management System Ghana</Link></li>
             <li><Link to="/products" className="footer-link">Point-of-Sale & Inventory</Link></li>
             <li><Link to="/products" className="footer-link">Enterprise ERP & CRM</Link></li>
           </ul>

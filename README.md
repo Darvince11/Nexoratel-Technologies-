@@ -30,6 +30,7 @@ Copy `.env.example` to `.env.local` for local use. In production, add the values
 | `SMTP_PASS` | Google app password, not the normal Gmail password |
 | `CONTACT_TO` | Optional destination inbox; defaults to `SMTP_USER` |
 | `GROQ_API_KEY` | Server-side key used by the website assistant |
+| `GROQ_MODEL` | Optional Groq model override; defaults to `openai/gpt-oss-120b` |
 | `PORT` | Supplied automatically by Hostinger |
 
 Do not prefix secrets with `VITE_`; Vite variables are embedded into public browser code.

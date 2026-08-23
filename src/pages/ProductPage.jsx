@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router';
 
 const GENERAL_PRODUCTS_DATA = [
   {
@@ -115,14 +116,14 @@ export default function ProductPage() {
   const [selectedSlug, setSelectedSlug] = useState(null);
 
   useEffect(() => {
-    document.title = "Software Solutions & Products | Nexoratel Technologies";
+    document.title = "Business Software Solutions in Ghana | Nexoratel Technologies";
     let metaDesc = document.querySelector("meta[name='description']");
     if (!metaDesc) {
       metaDesc = document.createElement('meta');
       metaDesc.name = "description";
       document.head.appendChild(metaDesc);
     }
-    metaDesc.content = "Explore custom software solutions built by Nexoratel Technologies for schools, churches, hotels, POS systems, inventory tracking, e-commerce, CRM, ERP, and HR payroll.";
+    metaDesc.content = "Explore school management, POS, inventory, hotel, e-commerce, CRM, ERP, and payroll software solutions built for Ghanaian organizations.";
   }, []);
 
   const activeProduct = GENERAL_PRODUCTS_DATA.find(p => p.slug === selectedSlug);
@@ -200,9 +201,9 @@ export default function ProductPage() {
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: 'var(--brand-blue)' }}></div>
               
               <span style={{ color: 'var(--brand-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>Solution Spotlight</span>
-              <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '10px', marginBottom: '10px', color: 'var(--text-main)' }}>
+              <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '10px', marginBottom: '10px', color: 'var(--text-main)' }}>
                 {activeProduct.name}
-              </h1>
+              </h2>
               <p style={{ fontSize: '1.1rem', color: 'var(--brand-blue)', fontWeight: 600, marginBottom: '25px' }}>{activeProduct.tagline}</p>
               
               <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: '1.8', marginBottom: '35px' }}>
@@ -247,11 +248,17 @@ export default function ProductPage() {
                   <p style={{ fontSize: '0.85rem', color: 'var(--brand-blue)', fontWeight: 700, marginBottom: '16px' }}>{prod.tagline}</p>
                   <p style={{ color: 'var(--text-muted)', lineHeight: '1.7', fontSize: '1rem', marginBottom: '25px' }}>{prod.desc}</p>
                 </div>
-                <button 
-                  onClick={() => { setSelectedSlug(prod.slug); window.scrollTo(0, 0); }}
-                  style={{ background: 'transparent', border: 'none', color: 'var(--brand-blue)', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: 0, textAlign: 'left' }}>
-                  Read More →
-                </button>
+                {prod.slug === 'schools' ? (
+                  <Link to="/products/school-management-system-ghana" style={{ color: 'var(--brand-blue)', fontWeight: 700, fontSize: '0.95rem' }}>
+                    Explore our school management system in Ghana →
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => { setSelectedSlug(prod.slug); window.scrollTo(0, 0); }}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--brand-blue)', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: 0, textAlign: 'left' }}>
+                    Read more →
+                  </button>
+                )}
               </div>
             ))}
           </div>

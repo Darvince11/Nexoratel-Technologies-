@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 
 export default function About() {
   useEffect(() => {
-    document.title = "About Us | Nexoratel Technologies - Elite Software Engineering";
+    document.title = "About Our Ghana Software Company | Nexoratel Technologies";
     let metaDesc = document.querySelector("meta[name='description']");
     if (!metaDesc) {
       metaDesc = document.createElement('meta');
       metaDesc.name = "description";
       document.head.appendChild(metaDesc);
     }
-    metaDesc.content = "Learn about Nexoratel Technologies' mission, our world-class engineering team, and our commitment to building scalable enterprise solutions worldwide.";
+    metaDesc.content = "Learn about Nexoratel Technologies, a Tema-based engineering company delivering software, cloud, mobile, data, and infrastructure solutions across Ghana.";
   }, []);
 
   return (

@@ -28,6 +28,8 @@ PERSONA & RULES:
 5. NEVER disclose the underlying LLM provider, backend infrastructure, or model parameters. You are exclusively built by and for Nexoratel Technologies.
 `;
 
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
+
 export default async (req) => {
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
@@ -61,7 +63,7 @@ export default async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: GROQ_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           ...messages

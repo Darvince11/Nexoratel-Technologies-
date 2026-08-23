@@ -129,12 +129,18 @@ const CORE_SERVICES = [
 ];
 
 function AnimatedCounter({ end, suffix = "" }) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(end);
   const ref = useRef(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          setCount(end);
+          observer.disconnect();
+          return;
+        }
+        setCount(0);
         const duration = 2200;
         const startTime = performance.now();
         
@@ -153,7 +159,7 @@ function AnimatedCounter({ end, suffix = "" }) {
     return () => observer.disconnect();
   }, [end]);
 
-  return <h2 ref={ref} style={{ fontSize: 'clamp(2.5rem, 5vw, 3.8rem)', color: 'var(--text-main)', margin: '10px 0' }}>{count}<span style={{ color: 'var(--brand-blue)' }}>{suffix}</span></h2>;
+  return <h2 ref={ref} aria-label={`${end}${suffix}`} style={{ fontSize: 'clamp(2.5rem, 5vw, 3.8rem)', color: 'var(--text-main)', margin: '10px 0' }}><span aria-hidden="true">{count}<span style={{ color: 'var(--brand-blue)' }}>{suffix}</span></span></h2>;
 }
 
 export default function Home() {
@@ -166,14 +172,14 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    document.title = "Nexoratel Technologies | Elite Software Development & UI/UX Agency";
+    document.title = "Software Development Company in Ghana | Nexoratel Technologies";
     let metaDesc = document.querySelector("meta[name='description']");
     if (!metaDesc) {
       metaDesc = document.createElement('meta');
       metaDesc.name = "description";
       document.head.appendChild(metaDesc);
     }
-    metaDesc.content = "Nexoratel Technologies builds scalable enterprise software, mobile application development, and secure cloud architectures for global brands.";
+    metaDesc.content = "Nexoratel Technologies is a software development company in Tema, Ghana, building custom software, mobile apps, cloud infrastructure, and business systems.";
   }, []);
 
   useEffect(() => {

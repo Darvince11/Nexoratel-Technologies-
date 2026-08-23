@@ -67,14 +67,14 @@ export default function Industries() {
   const [selectedSlug, setSelectedSlug] = useState(null);
 
   useEffect(() => {
-    document.title = "Industries We Serve | Nexoratel Technologies";
+    document.title = "Technology Solutions for Ghanaian Industries | Nexoratel";
     let metaDesc = document.querySelector("meta[name='description']");
     if (!metaDesc) {
       metaDesc = document.createElement('meta');
       metaDesc.name = "description";
       document.head.appendChild(metaDesc);
     }
-    metaDesc.content = "Discover the specialized industries powered by Nexoratel Technologies, including FinTech, Healthcare, E-Commerce, and Telecommunications.";
+    metaDesc.content = "Explore technology solutions for finance, healthcare, retail, education, hospitality, telecommunications, and other industries in Ghana.";
   }, []);
 
   const activeIndustry = INDUSTRIES_LIST.find(i => i.slug === selectedSlug);
@@ -164,9 +164,9 @@ export default function Industries() {
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: 'var(--brand-blue)' }}></div>
             
             <span style={{ color: 'var(--brand-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>Sector Expertise</span>
-            <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '10px', marginBottom: '20px', color: 'var(--text-main)' }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '10px', marginBottom: '20px', color: 'var(--text-main)' }}>
               {activeIndustry.title}
-            </h1>
+            </h2>
             
             <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: '1.8', marginBottom: '35px' }}>
               {activeIndustry.longDesc}

@@ -33,14 +33,14 @@ export default function Contact() {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    document.title = "Contact Us | Nexoratel Technologies - Start Your Project";
+    document.title = "Contact a Software Company in Tema, Ghana | Nexoratel";
     let metaDesc = document.querySelector("meta[name='description']");
     if (!metaDesc) {
       metaDesc = document.createElement('meta');
       metaDesc.name = "description";
       document.head.appendChild(metaDesc);
     }
-    metaDesc.content = "Get in touch with Nexoratel Technologies to discuss your next software development or digital transformation project.";
+    metaDesc.content = "Contact Nexoratel Technologies in Tema, Ghana to discuss custom software, mobile apps, cloud infrastructure, or business management systems.";
   }, []);
 
   const handleChange = (e) => {
@@ -218,7 +218,7 @@ export default function Contact() {
                 <div className="icon-wrapper"><LocationIcon /></div>
                 <div>
                   <h4 style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-main)', marginBottom: '3px' }}>Headquarters</h4>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>Tema commuinty 6</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>Tema Community 6, Ghana</p>
                 </div>
               </div>
               
