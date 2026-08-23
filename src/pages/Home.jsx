@@ -557,7 +557,7 @@ export default function Home() {
                   value={formData.email}
                   onChange={handleChange}
                   className="modern-input-field" 
-                  placeholder="Work Email Address" 
+                  placeholder="Email Address" 
                   required 
                 />
 
@@ -567,7 +567,7 @@ export default function Home() {
                   value={formData.phone}
                   onChange={handleChange}
                   className="modern-input-field" 
-                  placeholder="Phone Number (e.g. +233 50 000 0000)" 
+                  placeholder="Phone Number" 
                   required 
                 />
                 
