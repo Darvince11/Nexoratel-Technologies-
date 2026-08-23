@@ -8,8 +8,8 @@ const organizationSchema = {
   name: 'Nexoratel Technologies',
   url: SITE_URL,
   logo: `${SITE_URL}/favicon.png`,
-  email: 'nexorateltechnologies@gmail.com',
-  telephone: ['+233554167271', '+233509782732'],
+  email: 'info@nexorateltechnologies.com',
+  telephone: '+233545059232',
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Community 6',

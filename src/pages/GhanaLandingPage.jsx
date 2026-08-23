@@ -109,7 +109,7 @@ export default function GhanaLandingPage({ page }) {
           <p>{content.intro}</p>
           <div className="seo-actions">
             <Link to="/contact" className="btn-solid-blue">Request a consultation</Link>
-            <a href="https://wa.me/233554167271" className="btn-outline-blue" target="_blank" rel="noreferrer">Talk to us on WhatsApp</a>
+            <a href="https://wa.me/233545059232" className="btn-outline-blue" target="_blank" rel="noreferrer">Talk to us on WhatsApp</a>
           </div>
         </div>
       </section>

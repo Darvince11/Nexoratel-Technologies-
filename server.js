@@ -44,7 +44,7 @@ function schemaFor(pathname, title, description) {
     return {
       '@context': 'https://schema.org', '@type': 'ProfessionalService', '@id': `${siteUrl}/#organization`,
       name: 'Nexoratel Technologies', url: siteUrl, logo: `${siteUrl}/favicon.png`,
-      email: 'nexorateltechnologies@gmail.com', telephone: ['+233554167271', '+233509782732'],
+      email: 'info@nexorateltechnologies.com', telephone: '+233545059232',
       address: { '@type': 'PostalAddress', streetAddress: 'Community 6', addressLocality: 'Tema', addressRegion: 'Greater Accra', addressCountry: 'GH' },
       areaServed: { '@type': 'Country', name: 'Ghana' },
     };
@@ -177,8 +177,8 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
 
 const systemPrompt = `You are the Nexoratel Technologies Assistant.
 Answer questions about Nexoratel's software engineering, mobile development, DevOps, cloud computing, enterprise networking, data analytics, ERP/CRM, e-commerce, school management, and POS solutions.
-Nexoratel is based in Tema Community 6, Ghana. Contact: nexorateltechnologies@gmail.com, +233554167271, or +233509782732.
-Be welcoming, concise, and technically accurate. Do not use asterisks. For pricing or project requests, explain that solutions are tailored and direct the visitor to BOOK US or the project inquiry form. Do not claim capabilities or facts not listed here.`;
+Nexoratel is based in Tema Community 6, Ghana. Contact: info@nexorateltechnologies.com or +233545059232.
+Be welcoming, direct, and technically accurate. Answer in no more than three short sentences unless the visitor explicitly requests details. Do not use asterisks. For pricing or project requests, explain that solutions are tailored and direct the visitor to BOOK US or the project inquiry form. Do not claim capabilities or facts not listed here.`;
 
 app.post('/api/chat', chatLimiter, async (req, res) => {
   const incoming = Array.isArray(req.body?.messages) ? req.body.messages : null;
@@ -208,7 +208,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
         model: groqModel,
         messages: [{ role: 'system', content: systemPrompt }, ...messages],
         temperature: 0.5,
-        max_tokens: 300,
+        max_tokens: 120,
       }),
       signal: AbortSignal.timeout(15000),
     });

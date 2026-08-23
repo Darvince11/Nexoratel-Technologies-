@@ -226,7 +226,7 @@ export default function Contact() {
                 <div className="icon-wrapper"><EmailIcon /></div>
                 <div>
                   <h4 style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-main)', marginBottom: '3px' }}>Email Inquiries</h4>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>nexorateltechnologies@gmail.com</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>info@nexorateltechnologies.com</p>
                 </div>
               </div>
 
@@ -234,7 +234,7 @@ export default function Contact() {
                 <div className="icon-wrapper"><PhoneIcon /></div>
                 <div>
                   <h4 style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-main)', marginBottom: '3px' }}>Phone / WhatsApp</h4>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>+233554167271 <br/> +233509782732</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>+233545059232</p>
                 </div>
               </div>
             </div>
