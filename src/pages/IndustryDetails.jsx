@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router';
 import { IconCheck } from '../components/GlobalComponents'; // Adjust import path
 
 const INDUSTRY_DB = {

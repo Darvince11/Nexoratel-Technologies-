@@ -4,7 +4,7 @@ React/Vite website with an Express production server for Hostinger. The server s
 
 ## Local development
 
-Requirements: Node.js 22 or newer and npm.
+Requirements: Node.js 22.22 or newer and npm.
 
 ```bash
 npm install
@@ -43,7 +43,7 @@ Use Hostinger's **Node.js Web App** deployment, not a static `public_html` uploa
 3. Choose the purchased domain and select **Import Git repository**.
 4. Connect GitHub, then select the repository and production branch, normally `main`.
 5. Confirm these build settings:
-   - Node.js version: 22 or newer
+   - Node.js version: 22.22 or newer
    - Install command: `npm install` or `npm ci`
    - Build command: `npm run build`
    - Start command: `npm start`

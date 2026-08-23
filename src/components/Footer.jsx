@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { IconFacebook, IconLinkedIn, IconInstagram } from './Icons';
 import fullLogo from '../assets/logo.png';
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router';
 import { IconMenu, IconClose } from './Icons';
 
 // Import both the full text logo and the standalone emblem for mobile
