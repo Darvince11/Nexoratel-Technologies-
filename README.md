@@ -45,7 +45,7 @@ Use Hostinger's **Node.js Web App** deployment, not a static `public_html` uploa
 5. Confirm these build settings:
    - Node.js version: 22.22 or newer
    - Install command: `npm install` or `npm ci`
-   - Build command: `npm run build`
+   - Build command: `npm run build` (the `prestart` script also builds automatically)
    - Start command: `npm start`
    - Output directory: `dist` if Hostinger asks for it
 6. Add `SMTP_USER`, `SMTP_PASS`, `CONTACT_TO`, and `GROQ_API_KEY` under server environment variables.
