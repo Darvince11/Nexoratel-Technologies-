@@ -4,12 +4,7 @@ import { CONTACT_LIMITS, validateContactInput } from '../lib/contactValidation';
 import Turnstile from '../components/Turnstile';
 import { trackAnalyticsEvent } from '../components/GoogleAnalytics';
 import { useNavigate } from 'react-router';
-
-const TAGLINES = [
-  "Engineering The Future.",
-  "Transforming Industries.",
-  "Next-Gen Digital Solutions."
-];
+import './Home.css';
 
 const CheckCircleIcon = () => (
   <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -119,45 +114,10 @@ const CORE_SERVICES = [
   }
 ];
 
-function AnimatedCounter({ end, suffix = "" }) {
-  const [count, setCount] = useState(end);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          setCount(end);
-          observer.disconnect();
-          return;
-        }
-        setCount(0);
-        const duration = 2200;
-        const startTime = performance.now();
-        
-        const animate = (currentTime) => {
-          const elapsed = currentTime - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          setCount(Math.floor(progress * end));
-          if (progress < 1) requestAnimationFrame(animate);
-        };
-        requestAnimationFrame(animate);
-        observer.disconnect();
-      }
-    }, { threshold: 0.5 });
-    
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [end]);
-
-  return <h2 ref={ref} aria-label={`${end}${suffix}`} style={{ fontSize: 'clamp(2.5rem, 5vw, 3.8rem)', color: 'var(--text-main)', margin: '10px 0' }}><span aria-hidden="true">{count}<span style={{ color: 'var(--brand-blue)' }}>{suffix}</span></span></h2>;
-}
-
 export default function Home() {
   const navigate = useNavigate();
   const contactSectionRef = useRef(null);
 
-  const [currentLine, setCurrentLine] = useState(0);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '', website: '' });
   const [fieldErrors, setFieldErrors] = useState({});
   const [turnstileToken, setTurnstileToken] = useState('');
@@ -174,13 +134,6 @@ export default function Home() {
       document.head.appendChild(metaDesc);
     }
     metaDesc.content = "Nexoratel Technologies is a software development company in Tema, Ghana, building custom software, mobile apps, cloud infrastructure, and business systems.";
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentLine(prev => (prev + 1) % TAGLINES.length);
-    }, 4000);
-    return () => clearInterval(timer);
   }, []);
 
   const scrollToContact = () => {
@@ -261,18 +214,18 @@ export default function Home() {
           align-items: center;
           gap: 40px;
         }
-        .buyer-reasons-section { background: #071b32; color: #ffffff; padding: 78px 0; }
+        .buyer-reasons-section { padding: 96px 0; }
         .buyer-reasons-intro { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 70px; align-items: end; margin-bottom: 48px; }
-        .buyer-reasons-intro h2 { color: #ffffff; font-size: clamp(2.1rem, 4vw, 3.2rem); line-height: 1.12; margin-top: 10px; letter-spacing: 0; }
-        .buyer-reasons-intro p { color: #cbd5e1; font-size: 1.08rem; line-height: 1.75; max-width: 680px; }
-        .buyer-reasons-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255,255,255,0.18); }
-        .buyer-reason { min-height: 310px; padding: 30px 28px 24px; border-right: 1px solid rgba(255,255,255,0.18); display: flex; flex-direction: column; }
+        .buyer-reasons-intro h2 { font-size: clamp(2.1rem, 4vw, 3.2rem); line-height: 1.12; margin-top: 10px; letter-spacing: 0; }
+        .buyer-reasons-intro p { color: #475569; font-size: 1.08rem; line-height: 1.75; max-width: 680px; }
+        .buyer-reasons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        .buyer-reason { min-height: 290px; padding: 30px 28px 24px; display: flex; flex-direction: column; }
         .buyer-reason:last-child { border-right: 0; }
-        .buyer-reason > span { color: #7dd3fc; font-weight: 800; font-size: 0.82rem; }
-        .buyer-reason h3 { color: #ffffff; font-size: 1.3rem; line-height: 1.35; margin: 54px 0 14px; letter-spacing: 0; }
-        .buyer-reason p { color: #cbd5e1; line-height: 1.7; font-size: 0.96rem; }
+        .buyer-reason > span { color: #0369a1; font-weight: 800; font-size: 0.82rem; }
+        .buyer-reason h3 { font-size: 1.3rem; line-height: 1.35; margin: 54px 0 14px; letter-spacing: 0; }
+        .buyer-reason p { color: #475569; line-height: 1.7; font-size: 0.96rem; }
         .buyer-reasons-action { margin-top: 38px; display: flex; align-items: center; justify-content: space-between; gap: 25px; }
-        .buyer-reasons-action p { color: #e2e8f0; font-weight: 700; }
+        .buyer-reasons-action p { color: #334155; font-weight: 700; }
         .modern-input-field {
           width: 100%;
           padding: 16px 20px;
@@ -321,7 +274,7 @@ export default function Home() {
       `}</style>
 
       {/* Hero Section */}
-      <section style={{ 
+      <section className="home-hero" style={{ 
         minHeight: '85vh', 
         display: 'flex', 
         alignItems: 'center', 
@@ -331,20 +284,20 @@ export default function Home() {
         overflow: 'hidden',
         borderBottomLeftRadius: '40px',
         borderBottomRightRadius: '40px',
-        background: 'linear-gradient(135deg, #0ea5e9 0%, #1d4ed8 100%)',
-        boxShadow: '0 25px 50px rgba(14, 165, 233, 0.25)',
         zIndex: 2
       }}>
-        <div className="glow-orb blue" style={{ top: '10%', left: '10%', opacity: 0.3 }}></div>
+        <img className="home-hero-image" src="/blog-software-development-company-ghana.png" alt="Nexoratel software team planning a business platform in Accra" />
+        <div className="home-hero-overlay" />
         
         <div className="container hero-grid" style={{ zIndex: 2 }}>
           <div className="fade-in-up">
+            <span className="home-kicker">Software engineering / Ghana</span>
             <h1 className="responsive-hero-title" style={{ fontSize: '4.4rem', lineHeight: '1.08', marginBottom: '24px', color: '#ffffff' }}>
-              <span style={{ display: 'block' }}>{TAGLINES[currentLine]}</span>
+              Software built around how your business works.
             </h1>
             
             <p style={{ fontSize: '1.25rem', color: '#f8fafc', marginBottom: '40px', maxWidth: '100%', lineHeight: '1.6' }}>
-              We architect robust, enterprise-grade software systems and breathtaking digital experiences that elevate brands and accelerate global market dominance.
+              We design custom software, mobile products, and cloud systems that replace manual work, connect teams, and give growing organizations clearer control.
             </p>
             
             <div className="responsive-cta-group" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
@@ -366,7 +319,7 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="fade-in-up hero-mockup-wrapper" style={{ position: 'relative', animationDelay: '0.2s', display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '560px', margin: '0 auto' }}>
+          <div className="fade-in-up hero-mockup-wrapper" aria-hidden="true" style={{ position: 'relative', animationDelay: '0.2s', display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '560px', margin: '0 auto' }}>
              
              <div className="modern-card" style={{ width: '100%', background: '#ffffff', borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(42, 183, 234, 0.4)', boxShadow: '0 30px 60px rgba(0, 0, 0, 0.3)' }}>
                 
@@ -425,7 +378,7 @@ export default function Home() {
       </section>
 
       {/* Core Services Section */}
-      <section className="container py-20" style={{ paddingTop: '80px', paddingBottom: '40px' }}>
+      <section className="container py-20 home-services" style={{ paddingTop: '96px', paddingBottom: '80px' }}>
         <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 60px auto' }}>
           <span style={{ color: 'var(--brand-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.85rem' }}>What We Do Best</span>
           <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '10px' }}>Engineered For Peak Performance</h2>
@@ -436,7 +389,7 @@ export default function Home() {
           {/* Top Row: 3 items */}
           <div className="services-grid-3x2">
             {topServices.map((srv, index) => (
-              <article key={index} className="modern-card" style={{ padding: '40px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
+              <article key={index} className="modern-card home-service-card" style={{ padding: '40px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'var(--brand-blue)', opacity: 0.8 }}></div>
                 
                 <div>
@@ -453,7 +406,7 @@ export default function Home() {
           {/* Bottom Row: 3 items */}
           <div className="services-grid-3x2">
             {bottomServices.map((srv, index) => (
-              <article key={index} className="modern-card" style={{ padding: '40px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
+              <article key={index} className="modern-card home-service-card" style={{ padding: '40px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'var(--brand-blue)', opacity: 0.8 }}></div>
                 
                 <div>
@@ -473,7 +426,7 @@ export default function Home() {
         <div className="container">
           <div className="buyer-reasons-intro">
             <div>
-              <span style={{ color: '#7dd3fc', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.78rem' }}>Why Nexoratel</span>
+              <span className="home-section-kicker">Why Nexoratel</span>
               <h2>Technology decisions grounded in your business.</h2>
             </div>
             <p>A successful system should remove friction, make important work clearer, and remain dependable after launch. Our delivery process keeps those outcomes visible from the first conversation.</p>
@@ -494,29 +447,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Dynamic Animated Statistics Section */}
-      <section style={{ background: 'var(--bg-alt)', paddingTop: '60px', paddingBottom: '40px' }}>
+      <section className="home-delivery" style={{ paddingTop: '76px', paddingBottom: '76px' }}>
         <div className="container">
+          <div className="home-delivery-heading"><span className="home-section-kicker">How we deliver</span><h2>A clear path from problem to working product.</h2></div>
           <div className="grid-3">
-            <div className="modern-card" style={{ padding: '40px 24px', textAlign: 'center', background: '#ffffff' }}>
-              <AnimatedCounter end={500} suffix="+" />
-              <p style={{ fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px', fontSize: '0.8rem', marginTop: '10px' }}>Projects Delivered Globally</p>
-            </div>
-            
-            <div className="modern-card" style={{ padding: '40px 24px', textAlign: 'center', background: '#ffffff' }}>
-              <AnimatedCounter end={99} suffix="%" />
-              <p style={{ fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px', fontSize: '0.8rem', marginTop: '10px' }}>Client Satisfaction Rating</p>
-            </div>
-            
-            <div className="modern-card" style={{ padding: '40px 24px', textAlign: 'center', background: '#ffffff' }}>
-              <AnimatedCounter end={10} suffix="+" />
-              <p style={{ fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px', fontSize: '0.8rem', marginTop: '10px' }}>Enterprise SaaS Products</p>
-            </div>
+            <article className="home-delivery-step"><span>01</span><h3>Discover</h3><p>We map the users, workflow, constraints, data, and business result before defining the solution.</p></article>
+            <article className="home-delivery-step"><span>02</span><h3>Build and validate</h3><p>Working releases and regular reviews keep decisions visible while engineering, testing, and integration progress.</p></article>
+            <article className="home-delivery-step"><span>03</span><h3>Launch and improve</h3><p>Deployment, training, monitoring, and planned support help the product remain useful after release.</p></article>
           </div>
         </div>
       </section>
 
-      <section className="container" style={{ paddingTop: '80px', paddingBottom: '70px' }}>
+      <section className="container home-insights" style={{ paddingTop: '88px', paddingBottom: '88px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: '24px', marginBottom: '34px', flexWrap: 'wrap' }}>
           <div>
             <span style={{ color: 'var(--brand-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Latest Insights</span>
@@ -540,7 +482,7 @@ export default function Home() {
       </section>
 
       {/* High-Converting Contact / Book Us Section (Tightened Spacing & Top-Aligned) */}
-      <section ref={contactSectionRef} id="get-in-touch" style={{ position: 'relative', paddingTop: '40px', paddingBottom: '80px' }}>
+      <section ref={contactSectionRef} id="get-in-touch" className="home-contact" style={{ position: 'relative', paddingTop: '88px', paddingBottom: '96px' }}>
         <div className="glow-orb blue" style={{ bottom: '10%', right: '10%', opacity: 0.15 }}></div>
         <div className="container grid-2" style={{ alignItems: 'start', gap: '50px' }}>
           

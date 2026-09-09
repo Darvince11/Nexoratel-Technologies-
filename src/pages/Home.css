@@ -1,0 +1,118 @@
+.home-hero {
+  min-height: min(820px, 92vh) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  isolation: isolate;
+  background: #111827;
+}
+
+.home-hero-image,
+.home-hero-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.home-hero-image { object-fit: cover; object-position: center 42%; z-index: -2; }
+.home-hero-overlay { z-index: -1; background: linear-gradient(90deg, rgba(5, 15, 26, .94) 0%, rgba(5, 15, 26, .78) 43%, rgba(5, 15, 26, .2) 78%, rgba(5, 15, 26, .12) 100%); }
+.home-hero .hero-grid { grid-template-columns: minmax(0, 720px) 1fr; }
+.home-hero .hero-mockup-wrapper { display: none !important; }
+.home-hero h1 { max-width: 720px; letter-spacing: 0 !important; }
+.home-hero p { max-width: 650px !important; color: #dbe7ee !important; }
+.home-kicker,
+.home-section-kicker {
+  display: inline-block;
+  color: #047857;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.home-kicker { color: #67e8f9; margin-bottom: 18px; }
+.home-hero .btn-solid-blue { background: #12a8d8; box-shadow: none; }
+.home-hero .btn-outline-blue { background: rgba(255,255,255,.06); }
+
+.home-services { position: relative; }
+.home-services::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 24px;
+  width: 72px;
+  height: 4px;
+  background: #10b981;
+}
+.home-service-card {
+  min-height: 310px;
+  border-color: #dce7ed !important;
+  border-radius: 8px !important;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, .06) !important;
+}
+.home-service-card:hover { border-color: #7dd3fc !important; transform: translateY(-4px) !important; }
+
+.buyer-reasons-section {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(125deg, #eefaf8 0%, #f4f9fc 56%, #eaf5fb 100%) !important;
+  border-top: 1px solid #d8ebe8;
+  border-bottom: 1px solid #d8e7ed;
+}
+.buyer-reasons-section::after {
+  content: 'N';
+  position: absolute;
+  right: -20px;
+  top: -105px;
+  color: rgba(14, 165, 233, .055);
+  font: 800 420px/1 var(--font-heading);
+  pointer-events: none;
+}
+.buyer-reasons-section .container { position: relative; z-index: 1; }
+.buyer-reason {
+  background: rgba(255,255,255,.76);
+  border: 1px solid #d9e8eb !important;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+}
+.buyer-reason:nth-child(2),
+.buyer-reason:nth-child(4) { transform: translateY(18px); }
+.buyer-reasons-action { border-top: 1px solid #c7dedd; padding-top: 32px; }
+
+.home-delivery { background: #fff; }
+.home-delivery-heading { max-width: 700px; margin-bottom: 44px; }
+.home-delivery-heading h2 { margin-top: 10px; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: 0; }
+.home-delivery-step { padding: 32px 30px; border-left: 1px solid #cbdde5; min-height: 230px; }
+.home-delivery-step > span { color: #059669; font-weight: 800; font-size: .82rem; }
+.home-delivery-step h3 { margin: 42px 0 12px; font-size: 1.35rem; letter-spacing: 0; }
+.home-delivery-step p { color: #64748b; line-height: 1.7; }
+
+.home-insights article { transition: transform .25s ease, border-color .25s ease; }
+.home-insights article:hover { transform: translateY(-4px); border-color: #10b981 !important; }
+.home-contact { background: #f3f7f9; border-top: 1px solid #e2eaee; }
+.home-contact .modern-card { border-radius: 8px; }
+
+@media (max-width: 992px) {
+  .home-hero { min-height: 760px !important; }
+  .home-hero .hero-grid { grid-template-columns: 1fr; text-align: left; }
+  .home-hero .responsive-cta-group { justify-content: flex-start; }
+  .home-hero-overlay { background: linear-gradient(90deg, rgba(5,15,26,.92), rgba(5,15,26,.62)); }
+  .buyer-reason:nth-child(2), .buyer-reason:nth-child(4) { transform: none; }
+}
+
+@media (max-width: 640px) {
+  .home-hero { min-height: 700px !important; padding: 140px 0 72px !important; align-items: flex-end !important; }
+  .home-hero-image { object-position: 58% center; }
+  .home-hero-overlay { background: linear-gradient(0deg, rgba(5,15,26,.97) 0%, rgba(5,15,26,.83) 62%, rgba(5,15,26,.44) 100%); }
+  .home-hero .responsive-hero-title { font-size: 2.55rem !important; }
+  .home-hero p { font-size: 1.04rem !important; margin-bottom: 30px !important; }
+  .home-services::before { left: 16px; }
+  .home-service-card { min-height: auto; padding: 30px 24px !important; }
+  .buyer-reasons-section { padding: 70px 0 !important; }
+  .buyer-reasons-section::after { display: none; }
+  .buyer-reason { padding: 24px !important; }
+  .buyer-reason h3 { margin-top: 24px !important; }
+  .home-delivery-step { min-height: auto; padding: 26px 22px; border-left: 0; border-top: 1px solid #cbdde5; }
+  .home-delivery-step h3 { margin-top: 24px; }
+  .home-contact { padding: 68px 0 !important; }
+  .home-contact .modern-card { padding: 28px 20px !important; }
+}
