@@ -35,7 +35,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="site-navbar" style={{ 
+    <nav style={{ 
       position: 'absolute', 
       top: '24px', 
       left: '50%',
@@ -60,9 +60,6 @@ export default function Navbar() {
         .mobile-toggle { display: none; }
         .desktop-only { display: flex; }
         @media (max-width: 900px) {
-          .site-navbar { width: calc(100% - 32px) !important; top: 16px !important; border-radius: 14px !important; }
-          .site-navbar > .navbar-inner { height: 68px !important; padding: 0 18px !important; }
-          .site-navbar .nav-logo-slot, .site-navbar .nav-action-slot { min-width: 0 !important; }
           .desktop-logo { display: none !important; }
           .desktop-only { display: none !important; }
           .mobile-logo { display: flex !important; }
@@ -70,7 +67,7 @@ export default function Navbar() {
         }
       `}</style>
 
-      <div className="navbar-inner" style={{ 
+      <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
@@ -80,7 +77,7 @@ export default function Navbar() {
       }}>
         
         {/* 1. Left Section: Logo */}
-        <div className="nav-logo-slot" style={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
           <NavLink to="/" className="desktop-logo" style={{ alignItems: 'center', textDecoration: 'none' }}>
             <div style={{ height: '42px', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
               <img 
@@ -213,7 +210,7 @@ export default function Navbar() {
         </div>
 
         {/* 3. Right Section: Action Button & Mobile Toggle */}
-        <div className="nav-action-slot" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: '150px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: '150px' }}>
           <div className="desktop-only">
             <button 
               className="btn-solid-blue" 

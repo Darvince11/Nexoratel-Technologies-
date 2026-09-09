@@ -1,0 +1,5 @@
+2026/09/09-13:50:19.949 cdbc Creating DB C:\Users\User\Desktop\Nexoratel\Nexoratel\.edge-test-mobile-2\Default\EdgeCoupons/coupons_data.db since it was missing.
+2026/09/09-13:50:19.965 cdbc Reusing MANIFEST C:\Users\User\Desktop\Nexoratel\Nexoratel\.edge-test-mobile-2\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/09/09-13:57:00.731 57a0 Level-0 table #5: started
+2026/09/09-13:57:00.744 57a0 Level-0 table #5: 683284 bytes OK
+2026/09/09-13:57:00.749 57a0 Delete type=0 #3

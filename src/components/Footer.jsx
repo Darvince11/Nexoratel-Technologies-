@@ -16,7 +16,7 @@ export default function Footer() {
         .site-footer { background: #101820; color: #aebcc7; border-top: 4px solid #11a8d8; }
         .footer-main { display: grid; grid-template-columns: minmax(280px, 1.3fr) repeat(3, minmax(150px, .7fr)); gap: 54px; padding-top: 70px; padding-bottom: 56px; }
         .footer-brand { max-width: 350px; }
-        .footer-logo { width: 196px; height: 72px; object-fit: contain; object-position: left center; filter: brightness(0) invert(1); }
+        .footer-logo { width: 280px; height: 110px; object-fit: contain; object-position: left center; filter: brightness(0) invert(1); }
         .footer-summary { max-width: 340px; margin: 20px 0 24px; color: #b9c5ce; font-size: .96rem; line-height: 1.75; }
         .footer-contact { display: grid; gap: 8px; margin-bottom: 24px; font-style: normal; }
         .footer-contact a, .footer-contact span { color: #e7eef2; font-size: .92rem; overflow-wrap: anywhere; }
@@ -32,7 +32,7 @@ export default function Footer() {
         .footer-legal { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px 22px; }
         .footer-legal button { background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
         @media (max-width: 1000px) { .footer-main { grid-template-columns: 1.2fr 1fr 1fr; } .footer-column:last-child { grid-column: 2 / 4; } }
-        @media (max-width: 700px) { .footer-main { grid-template-columns: 1fr 1fr; gap: 38px 24px; padding-top: 52px; } .footer-brand { grid-column: 1 / -1; max-width: none; padding-bottom: 10px; } .footer-column:last-child { grid-column: 1 / -1; } .footer-bottom { align-items: flex-start; flex-direction: column; } .footer-legal { justify-content: flex-start; gap: 12px 18px; } }
+        @media (max-width: 700px) { .footer-main { grid-template-columns: 1fr 1fr; gap: 38px 24px; padding-top: 52px; } .footer-brand { grid-column: 1 / -1; max-width: none; padding-bottom: 10px; } .footer-logo { width: 196px; height: 72px; } .footer-column:last-child { grid-column: 1 / -1; } .footer-bottom { align-items: flex-start; flex-direction: column; } .footer-legal { justify-content: flex-start; gap: 12px 18px; } }
         @media (max-width: 420px) { .footer-main { grid-template-columns: 1fr; } .footer-brand, .footer-column:last-child { grid-column: auto; } }
       `}</style>
       <div className="container footer-main">

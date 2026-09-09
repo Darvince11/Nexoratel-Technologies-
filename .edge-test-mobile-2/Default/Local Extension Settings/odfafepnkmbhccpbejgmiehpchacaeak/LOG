@@ -1,0 +1,11 @@
+2026/09/09-13:55:33.174 57a0 Creating DB C:\Users\User\Desktop\Nexoratel\Nexoratel\.edge-test-mobile-2\Default\Local Extension Settings\odfafepnkmbhccpbejgmiehpchacaeak since it was missing.
+2026/09/09-13:55:33.234 57a0 Reusing MANIFEST C:\Users\User\Desktop\Nexoratel\Nexoratel\.edge-test-mobile-2\Default\Local Extension Settings\odfafepnkmbhccpbejgmiehpchacaeak/MANIFEST-000001
+2026/09/09-13:55:55.276 351c Level-0 table #5: started
+2026/09/09-13:55:56.675 351c Level-0 table #5: 4615059 bytes OK
+2026/09/09-13:55:56.687 351c Delete type=0 #3
+2026/09/09-13:56:09.585 351c Level-0 table #7: started
+2026/09/09-13:56:09.668 351c Level-0 table #7: 4321444 bytes OK
+2026/09/09-13:56:09.674 351c Delete type=0 #4
+2026/09/09-13:56:29.154 351c Level-0 table #9: started
+2026/09/09-13:56:29.216 351c Level-0 table #9: 4968383 bytes OK
+2026/09/09-13:56:29.233 351c Delete type=0 #6
