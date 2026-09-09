@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../lib/api';
+import { CONTACT_LIMITS, validateContactInput } from '../lib/contactValidation';
+import Turnstile from '../components/Turnstile';
+import { trackAnalyticsEvent } from '../components/GoogleAnalytics';
 
 const LocationIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -28,7 +32,10 @@ const CheckCircleIcon = () => (
 );
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '', website: '' });
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileReset, setTurnstileReset] = useState(0);
   const [status, setStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -45,32 +52,50 @@ export default function Contact() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFieldErrors((current) => ({ ...current, [e.target.name]: undefined }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validation = validateContactInput(formData);
+    if (!validation.isValid) {
+      setFieldErrors(validation.errors);
+      setStatus('error');
+      setErrorMessage('Please correct the highlighted fields.');
+      return;
+    }
+    if (!turnstileToken) {
+      setStatus('error');
+      setErrorMessage('Please complete the security verification.');
+      return;
+    }
     setStatus('submitting');
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...validation.data, turnstileToken }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        trackAnalyticsEvent('generate_lead', { form_location: 'contact_page' });
         setStatus('success');
-        setFormData({ name: '', email: '', phone: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', message: '', website: '' });
+        setFieldErrors({});
       } else {
         setStatus('error');
+        setFieldErrors(data.errors || {});
         setErrorMessage(data.error || 'Something went wrong. Please try again.');
       }
     } catch {
       setStatus('error');
       setErrorMessage('Could not connect to the mail server. Please try again later.');
+    } finally {
+      setTurnstileReset((value) => value + 1);
     }
   };
 
@@ -261,72 +286,100 @@ export default function Contact() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} noValidate>
                 <h3 style={{ marginBottom: '8px', fontSize: '1.8rem', color: 'var(--text-main)', letterSpacing: '-0.5px' }}>Project Inquiry</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '30px' }}>Fill out the form below to get a direct consultation.</p>
 
                 {status === 'error' && (
-                  <div style={{ padding: '14px 18px', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '10px', marginBottom: '20px', fontSize: '0.95rem' }}>
+                  <div role="alert" style={{ padding: '14px 18px', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '10px', marginBottom: '20px', fontSize: '0.95rem' }}>
                     {errorMessage}
                   </div>
                 )}
                 
                 {/* Full Name */}
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Full Name</label>
+                  <label htmlFor="contact-name" style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Full Name</label>
                   <input 
+                    id="contact-name"
                     type="text" 
                     name="name" 
                     value={formData.name}
                     onChange={handleChange}
                     className="sleek-input" 
                     placeholder="e.g. Jane Doe" 
+                    autoComplete="name"
+                    minLength="2"
+                    maxLength={CONTACT_LIMITS.name}
+                    aria-invalid={Boolean(fieldErrors.name)}
+                    aria-describedby={fieldErrors.name ? 'contact-name-error' : undefined}
                     required 
                   />
+                  {fieldErrors.name && <span id="contact-name-error" className="form-field-error" style={{ margin: '7px 0 0' }}>{fieldErrors.name}</span>}
                 </div>
                 
                 {/* Work Email Address */}
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Email Address</label>
+                  <label htmlFor="contact-email" style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Email Address</label>
                   <input 
+                    id="contact-email"
                     type="email" 
                     name="email" 
                     value={formData.email}
                     onChange={handleChange}
                     className="sleek-input" 
                     placeholder="jane@email.com" 
+                    autoComplete="email"
+                    maxLength={CONTACT_LIMITS.email}
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    aria-describedby={fieldErrors.email ? 'contact-email-error' : undefined}
                     required 
                   />
+                  {fieldErrors.email && <span id="contact-email-error" className="form-field-error" style={{ margin: '7px 0 0' }}>{fieldErrors.email}</span>}
                 </div>
 
                 {/* Phone Number */}
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Phone Number</label>
+                  <label htmlFor="contact-phone" style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Phone Number</label>
                   <input 
+                    id="contact-phone"
                     type="tel" 
                     name="phone" 
                     value={formData.phone}
                     onChange={handleChange}
                     className="sleek-input" 
                     placeholder="e.g. +233 50 000 0000" 
+                    autoComplete="tel"
+                    inputMode="tel"
+                    maxLength={CONTACT_LIMITS.phone}
+                    aria-invalid={Boolean(fieldErrors.phone)}
+                    aria-describedby={fieldErrors.phone ? 'contact-phone-error' : undefined}
                     required 
                   />
+                  {fieldErrors.phone && <span id="contact-phone-error" className="form-field-error" style={{ margin: '7px 0 0' }}>{fieldErrors.phone}</span>}
                 </div>
 
                 {/* Project Goals */}
                 <div style={{ marginBottom: '30px' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Project Goals</label>
+                  <label htmlFor="contact-message" style={{ display: 'block', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Project Goals</label>
                   <textarea 
+                    id="contact-message"
                     name="message" 
                     value={formData.message}
                     onChange={handleChange}
                     className="sleek-input" 
                     placeholder="Briefly describe your software requirements and timeline..." 
                     rows="5" 
+                    minLength="20"
+                    maxLength={CONTACT_LIMITS.message}
+                    aria-invalid={Boolean(fieldErrors.message)}
+                    aria-describedby={fieldErrors.message ? 'contact-message-error' : undefined}
                     required 
                     style={{ resize: 'none' }}
                   ></textarea>
+                  {fieldErrors.message && <span id="contact-message-error" className="form-field-error" style={{ margin: '7px 0 0' }}>{fieldErrors.message}</span>}
                 </div>
+                <div className="contact-honeypot" aria-hidden="true"><label htmlFor="contact-website">Website</label><input id="contact-website" name="website" value={formData.website} onChange={handleChange} tabIndex="-1" autoComplete="off" /></div>
+                <Turnstile onToken={setTurnstileToken} resetSignal={turnstileReset} />
                 
                 <button 
                   type="submit" 

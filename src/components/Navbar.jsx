@@ -184,6 +184,15 @@ export default function Navbar() {
             )}
           </NavLink>
 
+          <NavLink to="/blog" style={{ position: 'relative', textDecoration: 'none', color: '#f8fafc', whiteSpace: 'nowrap', paddingBottom: '4px' }}>
+            {({ isActive }) => (
+              <>
+                <span style={{ color: isActive ? '#ffffff' : '#f8fafc' }}>Blog</span>
+                {isActive && <span style={{ position: 'absolute', bottom: '-2px', left: 0, width: '100%', height: '3px', backgroundColor: '#ffffff', borderRadius: '4px', boxShadow: '0 0 10px rgba(255, 255, 255, 0.8)', animation: 'slideInBar 0.3s ease forwards', transformOrigin: 'left' }} />}
+              </>
+            )}
+          </NavLink>
+
           <NavLink to="/contact" style={{ position: 'relative', textDecoration: 'none', color: '#f8fafc', whiteSpace: 'nowrap', paddingBottom: '4px' }}>
             {({ isActive }) => (
               <>
@@ -252,6 +261,7 @@ export default function Navbar() {
           <NavLink to="/services" onClick={()=>setIsOpen(false)} style={({isActive}) => ({ color: isActive ? '#ffffff' : '#f8fafc', fontWeight: 500, textDecoration: 'none' })}>Services</NavLink>
           <NavLink to="/industries" onClick={()=>setIsOpen(false)} style={({isActive}) => ({ color: isActive ? '#ffffff' : '#f8fafc', fontWeight: 500, textDecoration: 'none' })}>Industries</NavLink>
           <NavLink to="/products" onClick={()=>setIsOpen(false)} style={({isActive}) => ({ color: isActive ? '#ffffff' : '#f8fafc', fontWeight: 500, textDecoration: 'none' })}>Products</NavLink>
+          <NavLink to="/blog" onClick={()=>setIsOpen(false)} style={({isActive}) => ({ color: isActive ? '#ffffff' : '#f8fafc', fontWeight: 500, textDecoration: 'none' })}>Blog</NavLink>
           <NavLink to="/contact" onClick={()=>setIsOpen(false)} style={({isActive}) => ({ color: isActive ? '#ffffff' : '#f8fafc', fontWeight: 500, textDecoration: 'none' })}>Contact Us</NavLink>
           
           <button 

@@ -3,6 +3,8 @@ import { IconFacebook, IconLinkedIn, IconInstagram } from './Icons';
 import fullLogo from '../assets/logo.png';
 
 export default function Footer() {
+  const openCookieSettings = () => window.dispatchEvent(new Event('nexoratel:open-cookie-settings'));
+
   return (
     <footer style={{ 
       background: 'linear-gradient(180deg, #0b1f38 0%, #050e1d 100%)', 
@@ -92,6 +94,7 @@ export default function Footer() {
             <li><Link to="/about" className="footer-link">Who We Are</Link></li>
             <li><Link to="/industries" className="footer-link">Industries We Serve</Link></li>
             <li><Link to="/about" className="footer-link">Our Core Values</Link></li>
+            <li><Link to="/blog" className="footer-link">Insights & Blog</Link></li>
             <li><Link to="/contact" className="footer-link">Contact Us</Link></li>
           </ul>
         </div>
@@ -123,6 +126,9 @@ export default function Footer() {
         <div style={{ display: 'flex', gap: '24px' }}>
           <Link to="/terms" className="footer-link">Terms of Service</Link>
           <Link to="/aml-policy" className="footer-link">AML Policy</Link>
+          <Link to="/accessibility" className="footer-link">Accessibility</Link>
+          <Link to="/cookie-policy" className="footer-link">Cookie Policy</Link>
+          <button type="button" onClick={openCookieSettings} className="footer-link" style={{ background: 'none', border: 0, padding: 0, font: 'inherit', cursor: 'pointer' }}>Cookie Settings</button>
         </div>
       </div>
     </footer>

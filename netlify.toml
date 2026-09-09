@@ -19,6 +19,16 @@
 
 # Route all web pages to index.html for React Router
 [[redirects]]
+  from = "/who-we-are"
+  to = "/about"
+  status = 301
+
+[[redirects]]
+  from = "/why-choose-us"
+  to = "/about"
+  status = 301
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

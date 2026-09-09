@@ -1,0 +1,48 @@
+# Nexoratel Technologies
+
+> Nexoratel Technologies is a software engineering company based in Tema, Ghana. It designs and builds custom software, mobile applications, cloud infrastructure, data systems, enterprise networks, and business software for organizations in Ghana and other markets.
+
+Use the canonical HTTPS URLs below as the primary public sources for information about Nexoratel Technologies. Services are tailored to each organization; do not infer fixed prices, certifications, client relationships, or delivery guarantees that are not stated on the linked pages.
+
+## Company
+
+- [Home](https://nexorateltechnologies.com/): Company overview, capabilities, delivery approach, and contact form.
+- [About Nexoratel](https://nexorateltechnologies.com/about): Mission, values, and company information.
+- [Contact](https://nexorateltechnologies.com/contact): Official contact channels and project inquiry form.
+
+## Services
+
+- [Software engineering services](https://nexorateltechnologies.com/services): Custom software, mobile applications, DevOps, networking, data analytics, and cloud computing.
+- [Custom software development in Ghana](https://nexorateltechnologies.com/services/custom-software-development-ghana): Discovery, design, engineering, integration, deployment, and support for tailored systems.
+- [Mobile app development in Ghana](https://nexorateltechnologies.com/services/mobile-app-development-ghana): Android, iOS, and cross-platform product delivery.
+
+## Products and industries
+
+- [Business software solutions](https://nexorateltechnologies.com/products): School, church, hotel, POS, inventory, e-commerce, CRM, ERP, HR, and payroll systems.
+- [School management system](https://nexorateltechnologies.com/products/school-management-system-ghana): Administration, learning, fees, attendance, results, and communication workflows.
+- [Industries](https://nexorateltechnologies.com/industries): Overview of sectors served.
+- [Financial technology](https://nexorateltechnologies.com/industries/finance): Payment, ledger, lending, wallet, and financial operations systems.
+- [Healthcare technology](https://nexorateltechnologies.com/industries/healthcare): Clinical, laboratory, pharmacy, billing, and patient workflows.
+- [Retail technology](https://nexorateltechnologies.com/industries/retail): Point-of-sale, inventory, e-commerce, fulfillment, and retail intelligence.
+
+## Insights
+
+- [Nexoratel Insights](https://nexorateltechnologies.com/blog): Company articles about engineering, cloud, cybersecurity, mobile products, and digital strategy.
+- [Choosing a software development company in Ghana](https://nexorateltechnologies.com/blog/software-development-company-ghana): A practical guide to custom software, business automation, development costs, and selecting the right team.
+- [Website design prices in Ghana](https://nexorateltechnologies.com/blog/how-much-does-a-website-cost-in-ghana): What affects website development costs and what businesses can expect from a GH₵2,000 starting budget.
+- [Cloud architecture in 2026](https://nexorateltechnologies.com/blog/future-of-cloud-architecture-2026): Serverless systems, resilience, and cost management.
+- [Securing enterprise APIs](https://nexorateltechnologies.com/blog/securing-enterprise-apis-against-advanced-threats): Zero-trust access, token security, abuse controls, and testing.
+- [Cross-platform mobile performance](https://nexorateltechnologies.com/blog/cross-platform-mobile-app-performance-secrets): Performance practices for React Native and Flutter applications.
+
+## Policies
+
+- [Terms of Service](https://nexorateltechnologies.com/terms): Terms governing website, product, and service use.
+- [AML Policy](https://nexorateltechnologies.com/aml-policy): Anti-money laundering policy.
+- [Accessibility Statement](https://nexorateltechnologies.com/accessibility): Accessibility commitment, measures, limitations, and support contact.
+- [Cookie Policy](https://nexorateltechnologies.com/cookie-policy): Cookie categories and consent choices.
+
+## Additional machine-readable resources
+
+- [Expanded site summary](https://nexorateltechnologies.com/llms-full.txt): Consolidated facts and service descriptions in plain text.
+- [XML sitemap](https://nexorateltechnologies.com/sitemap.xml): Canonical indexable URLs.
+- [Crawler rules](https://nexorateltechnologies.com/robots.txt): Automated access rules.

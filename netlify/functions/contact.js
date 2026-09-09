@@ -1,5 +1,7 @@
 import process from 'node:process';
 import nodemailer from 'nodemailer';
+import { validateContactInput } from '../../src/lib/contactValidation.js';
+import { verifyTurnstileToken } from '../../lib/turnstile.js';
 
 export default async (req) => {
   if (req.method !== 'POST') {
@@ -10,14 +12,24 @@ export default async (req) => {
   }
 
   try {
-    const { name, email, phone, message } = await req.json();
-
-    if (!name || !email || !message) {
-      return new Response(JSON.stringify({ error: 'Please fill in all required fields.' }), {
+    const input = await req.json();
+    const { data, errors, isValid } = validateContactInput(input);
+    if (data.website) return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    try {
+      const remoteIp = req.headers.get('cf-connecting-ip') || req.headers.get('x-nf-client-connection-ip');
+      const verified = await verifyTurnstileToken(input.turnstileToken, remoteIp);
+      if (!verified) return new Response(JSON.stringify({ error: 'Security verification failed. Please try again.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    } catch (error) {
+      console.error('Turnstile verification error:', error.message);
+      return new Response(JSON.stringify({ error: 'Security verification is temporarily unavailable. Please try again.' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
+    }
+    if (!isValid) {
+      return new Response(JSON.stringify({ error: 'Please correct the highlighted fields.', errors }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
+    const { name, email, phone, message } = data;
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -30,7 +42,7 @@ export default async (req) => {
     // 1. Alert sent to your team inbox
     await transporter.sendMail({
       from: `"Website Inquiry" <${process.env.SMTP_USER}>`,
-      to: process.env.SMTP_USER,
+      to: process.env.CONTACT_TO || process.env.SMTP_USER,
       replyTo: email,
       subject: `New Project Inquiry from ${name}`,
       text: `Client Name: ${name}\nClient Email: ${email}\nClient Phone: ${phone || 'Not provided'}\n\nProject Goals:\n${message}`,
@@ -50,7 +62,7 @@ export default async (req) => {
     });
   } catch (error) {
     console.error('Nodemailer Error:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Failed to send message.' }), {
+    return new Response(JSON.stringify({ error: 'We could not send your message. Please try again later.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

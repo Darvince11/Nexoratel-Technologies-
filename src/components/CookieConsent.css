@@ -1,0 +1,16 @@
+.cookie-panel { position: fixed; z-index: 5000; left: 20px; right: 20px; bottom: 20px; max-width: 1180px; margin: auto; background: #fff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 24px 70px rgba(2,12,27,.25); padding: 24px; display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; }
+.cookie-copy { max-width: 720px; }
+.cookie-copy > span { color: #0369a1; text-transform: uppercase; font-size: .75rem; font-weight: 800; }
+.cookie-copy h2 { margin: 5px 0 8px; letter-spacing: 0; }
+.cookie-copy p { color: #475569; line-height: 1.55; }
+.cookie-copy a { color: #0369a1; text-decoration: underline; }
+.cookie-actions { display: flex; flex-wrap: wrap; gap: 9px; justify-content: flex-end; min-width: 330px; }
+.cookie-actions button { border-radius: 6px; padding: 11px 15px; font: inherit; font-weight: 800; cursor: pointer; }
+.cookie-primary { color: #fff; background: #075985; border: 1px solid #075985; }
+.cookie-secondary { color: #0f172a; background: #fff; border: 1px solid #94a3b8; }
+.cookie-options { margin-top: 16px; display: grid; gap: 8px; }
+.cookie-options label { display: flex; align-items: center; justify-content: space-between; gap: 24px; background: #f8fafc; padding: 10px 12px; }
+.cookie-options label span { display: flex; flex-direction: column; }
+.cookie-options small { color: #64748b; margin-top: 2px; }
+.cookie-options input { width: 20px; height: 20px; accent-color: #075985; }
+@media (max-width: 760px) { .cookie-panel { align-items: stretch; flex-direction: column; gap: 18px; max-height: calc(100vh - 30px); overflow-y: auto; bottom: 15px; left: 15px; right: 15px; }.cookie-actions { min-width: 0; justify-content: stretch; }.cookie-actions button { flex: 1 1 140px; } }

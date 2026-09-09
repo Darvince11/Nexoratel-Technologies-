@@ -13,7 +13,7 @@ const ensureMeta = (selector, attribute, name) => {
   return element;
 };
 
-export default function Seo({ title, description, path, schema, noindex = false }) {
+export default function Seo({ title, description, path, schema, image = DEFAULT_IMAGE, noindex = false }) {
   useEffect(() => {
     const url = `${SITE_URL}${path === '/' ? '' : path}`;
     document.title = title;
@@ -28,11 +28,11 @@ export default function Seo({ title, description, path, schema, noindex = false 
       ['property', 'og:title', title],
       ['property', 'og:description', description],
       ['property', 'og:url', url],
-      ['property', 'og:image', DEFAULT_IMAGE],
+      ['property', 'og:image', image],
       ['name', 'twitter:card', 'summary_large_image'],
       ['name', 'twitter:title', title],
       ['name', 'twitter:description', description],
-      ['name', 'twitter:image', DEFAULT_IMAGE],
+      ['name', 'twitter:image', image],
     ];
     socialTags.forEach(([attribute, name, content]) => {
       ensureMeta(`meta[${attribute}="${name}"]`, attribute, name).content = content;
@@ -55,7 +55,7 @@ export default function Seo({ title, description, path, schema, noindex = false 
       script.text = JSON.stringify(schema);
       document.head.appendChild(script);
     }
-  }, [description, noindex, path, schema, title]);
+  }, [description, image, noindex, path, schema, title]);
 
   return null;
 }

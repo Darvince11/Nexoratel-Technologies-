@@ -1,6 +1,8 @@
 import process from 'node:process';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
+import { validateContactInput } from '../src/lib/contactValidation.js';
+import { verifyTurnstileToken } from '../lib/turnstile.js';
 
 // Explicitly load .env.local and fallback to .env
 dotenv.config({ path: '.env.local' });
@@ -11,11 +13,18 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { name, email, phone, message } = req.body;
-
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: 'Please fill in all required fields.' });
+  const { data, errors, isValid } = validateContactInput(req.body);
+  if (data.website) return res.status(200).json({ success: true });
+  try {
+    const remoteIp = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    const verified = await verifyTurnstileToken(req.body?.turnstileToken, remoteIp);
+    if (!verified) return res.status(400).json({ error: 'Security verification failed. Please try again.' });
+  } catch (error) {
+    console.error('Turnstile verification error:', error.message);
+    return res.status(503).json({ error: 'Security verification is temporarily unavailable. Please try again.' });
   }
+  if (!isValid) return res.status(400).json({ error: 'Please correct the highlighted fields.', errors });
+  const { name, email, phone, message } = data;
 
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.error('SMTP Credentials Missing in environment variables.');
@@ -36,7 +45,7 @@ export default async function handler(req, res) {
     // 1. Notification email sent to your team inbox (Includes Phone Number)
     await transporter.sendMail({
       from: `"Website Inquiry" <${process.env.SMTP_USER}>`,
-      to: process.env.SMTP_USER,
+      to: process.env.CONTACT_TO || process.env.SMTP_USER,
       replyTo: email,
       subject: `New Project Inquiry from ${name}`,
       text: `Client Name: ${name}\nClient Email: ${email}\nClient Phone: ${phone || 'Not provided'}\n\nProject Goals:\n${message}`,
@@ -53,6 +62,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error('Nodemailer Error:', error);
-    return res.status(500).json({ error: error.message || 'Failed to send message.' });
+    return res.status(500).json({ error: 'We could not send your message. Please try again later.' });
   }
 }

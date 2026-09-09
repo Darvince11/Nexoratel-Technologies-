@@ -1,4 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
+import { apiUrl } from '../lib/api';
+import { CONTACT_LIMITS, validateContactInput } from '../lib/contactValidation';
+import Turnstile from '../components/Turnstile';
+import { trackAnalyticsEvent } from '../components/GoogleAnalytics';
 import { useNavigate } from 'react-router';
 
 const TAGLINES = [
@@ -7,35 +11,6 @@ const TAGLINES = [
   "Next-Gen Digital Solutions."
 ];
 
-// --- CUSTOM SVG VECTOR ICONS FOR ENTERPRISE PILLARS ---
-const IconShield = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-  </svg>
-);
-
-const IconLightning = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-  </svg>
-);
-
-const IconChart = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-    <polyline points="17 6 23 6 23 12"></polyline>
-  </svg>
-);
-
-const IconSupportUser = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-    <circle cx="9" cy="7" r="4"></circle>
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-  </svg>
-);
-
 const CheckCircleIcon = () => (
   <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -43,11 +18,27 @@ const CheckCircleIcon = () => (
   </svg>
 );
 
-const ENTERPRISE_PILLARS = [
-  { icon: <IconShield />, title: "Enterprise Security", subtitle: "ISO-Aligned Defense" },
-  { icon: <IconLightning />, title: "Rapid Deployment", subtitle: "Agile CI/CD Pipelines" },
-  { icon: <IconChart />, title: "Scalable Growth", subtitle: "High-Availability Cloud" },
-  { icon: <IconSupportUser />, title: "Dedicated Support", subtitle: "24/7 Engineering Ops" }
+const BUYER_REASONS = [
+  {
+    number: '01',
+    title: 'Built around how you work',
+    description: 'We study your users, approvals, data, and operating constraints before recommending technology, so the solution fits the business instead of forcing the business into a template.',
+  },
+  {
+    number: '02',
+    title: 'Progress you can see',
+    description: 'Clear milestones, working demonstrations, and regular reviews keep your team involved and give decision-makers visibility before launch day.',
+  },
+  {
+    number: '03',
+    title: 'Designed to remain maintainable',
+    description: 'We plan architecture, permissions, integrations, testing, and documentation for the people who will operate and improve the system after delivery.',
+  },
+  {
+    number: '04',
+    title: 'A partner beyond deployment',
+    description: 'Training, monitoring, maintenance, and planned improvements help your team adopt the product and keep it useful as the organization changes.',
+  },
 ];
 
 // --- CUSTOM MODERN VECTOR SVG ILLUSTRATIONS FOR SERVICES ---
@@ -167,7 +158,10 @@ export default function Home() {
   const contactSectionRef = useRef(null);
 
   const [currentLine, setCurrentLine] = useState(0);
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '', website: '' });
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileReset, setTurnstileReset] = useState(0);
   const [status, setStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -195,32 +189,50 @@ export default function Home() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFieldErrors((current) => ({ ...current, [e.target.name]: undefined }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validation = validateContactInput(formData);
+    if (!validation.isValid) {
+      setFieldErrors(validation.errors);
+      setStatus('error');
+      setErrorMessage('Please correct the highlighted fields.');
+      return;
+    }
+    if (!turnstileToken) {
+      setStatus('error');
+      setErrorMessage('Please complete the security verification.');
+      return;
+    }
     setStatus('submitting');
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...validation.data, turnstileToken }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        trackAnalyticsEvent('generate_lead', { form_location: 'homepage' });
         setStatus('success');
-        setFormData({ name: '', email: '', phone: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', message: '', website: '' });
+        setFieldErrors({});
       } else {
         setStatus('error');
+        setFieldErrors(data.errors || {});
         setErrorMessage(data.error || 'Something went wrong. Please try again.');
       }
     } catch {
       setStatus('error');
       setErrorMessage('Could not connect to the mail server. Please try again later.');
+    } finally {
+      setTurnstileReset((value) => value + 1);
     }
   };
 
@@ -249,6 +261,18 @@ export default function Home() {
           align-items: center;
           gap: 40px;
         }
+        .buyer-reasons-section { background: #071b32; color: #ffffff; padding: 78px 0; }
+        .buyer-reasons-intro { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 70px; align-items: end; margin-bottom: 48px; }
+        .buyer-reasons-intro h2 { color: #ffffff; font-size: clamp(2.1rem, 4vw, 3.2rem); line-height: 1.12; margin-top: 10px; letter-spacing: 0; }
+        .buyer-reasons-intro p { color: #cbd5e1; font-size: 1.08rem; line-height: 1.75; max-width: 680px; }
+        .buyer-reasons-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255,255,255,0.18); }
+        .buyer-reason { min-height: 310px; padding: 30px 28px 24px; border-right: 1px solid rgba(255,255,255,0.18); display: flex; flex-direction: column; }
+        .buyer-reason:last-child { border-right: 0; }
+        .buyer-reason > span { color: #7dd3fc; font-weight: 800; font-size: 0.82rem; }
+        .buyer-reason h3 { color: #ffffff; font-size: 1.3rem; line-height: 1.35; margin: 54px 0 14px; letter-spacing: 0; }
+        .buyer-reason p { color: #cbd5e1; line-height: 1.7; font-size: 0.96rem; }
+        .buyer-reasons-action { margin-top: 38px; display: flex; align-items: center; justify-content: space-between; gap: 25px; }
+        .buyer-reasons-action p { color: #e2e8f0; font-weight: 700; }
         .modern-input-field {
           width: 100%;
           padding: 16px 20px;
@@ -279,11 +303,20 @@ export default function Home() {
             max-width: 300px !important;
             margin: 40px auto 0 auto !important;
           }
+          .buyer-reasons-intro { grid-template-columns: 1fr; gap: 20px; }
+          .buyer-reasons-grid { grid-template-columns: repeat(2, 1fr); }
+          .buyer-reason:nth-child(2) { border-right: 0; }
+          .buyer-reason:nth-child(-n+2) { border-bottom: 1px solid rgba(255,255,255,0.18); }
         }
         @media (max-width: 640px) {
           .services-grid-3x2 { grid-template-columns: 1fr; }
           .responsive-cta-group { flex-direction: column; width: 100%; }
           .responsive-cta-group button { width: 100%; text-align: center; }
+          .buyer-reasons-section { padding: 60px 0; }
+          .buyer-reasons-grid { grid-template-columns: 1fr; }
+          .buyer-reason { min-height: auto; padding: 26px 0; border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.18); }
+          .buyer-reason h3 { margin-top: 28px; }
+          .buyer-reasons-action { align-items: flex-start; flex-direction: column; }
         }
       `}</style>
 
@@ -436,20 +469,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Enterprise Value Pillars */}
-      <section className="container" style={{ paddingBottom: '60px', paddingTop: '20px' }}>
-        <div className="grid-4">
-          {ENTERPRISE_PILLARS.map((pillar, idx) => (
-            <div key={idx} className="modern-card" style={{ padding: '22px', display: 'flex', alignItems: 'center', gap: '16px', background: '#ffffff' }}>
-              <div style={{ width: '50px', height: '50px', borderRadius: '14px', background: 'var(--brand-blue-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(42, 183, 234, 0.2)' }}>
-                {pillar.icon}
-              </div>
-              <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)' }}>{pillar.title}</h4>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{pillar.subtitle}</p>
-              </div>
+      <section className="buyer-reasons-section">
+        <div className="container">
+          <div className="buyer-reasons-intro">
+            <div>
+              <span style={{ color: '#7dd3fc', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.78rem' }}>Why Nexoratel</span>
+              <h2>Technology decisions grounded in your business.</h2>
             </div>
-          ))}
+            <p>A successful system should remove friction, make important work clearer, and remain dependable after launch. Our delivery process keeps those outcomes visible from the first conversation.</p>
+          </div>
+          <div className="buyer-reasons-grid">
+            {BUYER_REASONS.map((reason) => (
+              <article className="buyer-reason" key={reason.number}>
+                <span>{reason.number}</span>
+                <h3>{reason.title}</h3>
+                <p>{reason.description}</p>
+              </article>
+            ))}
+          </div>
+          <div className="buyer-reasons-action">
+            <p>Bring us the workflow, bottleneck, or product idea you need to improve.</p>
+            <button className="btn-solid-blue" onClick={scrollToContact}>Talk to an engineer</button>
+          </div>
         </div>
       </section>
 
@@ -472,6 +513,29 @@ export default function Home() {
               <p style={{ fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px', fontSize: '0.8rem', marginTop: '10px' }}>Enterprise SaaS Products</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="container" style={{ paddingTop: '80px', paddingBottom: '70px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: '24px', marginBottom: '34px', flexWrap: 'wrap' }}>
+          <div>
+            <span style={{ color: 'var(--brand-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Latest Insights</span>
+            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '8px', letterSpacing: 0 }}>Thinking from our engineering teams.</h2>
+          </div>
+          <button onClick={() => navigate('/blog')} className="btn-outline-blue" style={{ padding: '12px 24px' }}>View all insights</button>
+        </div>
+        <div className="grid-3">
+          {[
+            ['Software Development', 'Software Development Company in Ghana: How to Choose the Right Team', 'software-development-company-ghana'],
+            ['Website Development', 'How Much Does a Website Cost in Ghana? 2026 Prices', 'how-much-does-a-website-cost-in-ghana'],
+            ['Cybersecurity', 'Securing Enterprise APIs Against Advanced Threats', 'securing-enterprise-apis-against-advanced-threats']
+          ].map(([category, title, slug]) => (
+            <article key={slug} style={{ borderTop: '2px solid var(--brand-blue)', padding: '24px 0' }}>
+              <span style={{ color: '#0284c7', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>{category}</span>
+              <h3 style={{ fontSize: '1.25rem', lineHeight: 1.4, margin: '12px 0 20px', letterSpacing: 0 }}>{title}</h3>
+              <button onClick={() => navigate(`/blog/${slug}`)} style={{ padding: 0, border: 0, background: 'transparent', color: '#0369a1', font: 'inherit', fontWeight: 800, cursor: 'pointer' }}>Read article -&gt;</button>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -531,56 +595,88 @@ export default function Home() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} noValidate>
                 <h3 style={{ marginBottom: '8px', fontSize: '1.8rem', color: 'var(--text-main)' }}>Start Your Journey</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '25px' }}>Fill in your details for an immediate consultation.</p>
 
                 {status === 'error' && (
-                  <div style={{ padding: '14px 18px', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '10px', marginBottom: '20px', fontSize: '0.95rem' }}>
+                  <div role="alert" style={{ padding: '14px 18px', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '10px', marginBottom: '20px', fontSize: '0.95rem' }}>
                     {errorMessage}
                   </div>
                 )}
                 
-                <input 
+                <label className="sr-only" htmlFor="home-contact-name">Full name</label>
+                <input
+                  id="home-contact-name"
                   type="text" 
                   name="name" 
                   value={formData.name}
                   onChange={handleChange}
                   className="modern-input-field" 
                   placeholder="Your Full Name" 
+                  autoComplete="name"
+                  minLength="2"
+                  maxLength={CONTACT_LIMITS.name}
+                  aria-invalid={Boolean(fieldErrors.name)}
+                  aria-describedby={fieldErrors.name ? 'home-name-error' : undefined}
                   required 
                 />
+                {fieldErrors.name && <span id="home-name-error" className="form-field-error">{fieldErrors.name}</span>}
                 
-                <input 
+                <label className="sr-only" htmlFor="home-contact-email">Email address</label>
+                <input
+                  id="home-contact-email"
                   type="email" 
                   name="email" 
                   value={formData.email}
                   onChange={handleChange}
                   className="modern-input-field" 
                   placeholder="Email Address" 
+                  autoComplete="email"
+                  maxLength={CONTACT_LIMITS.email}
+                  aria-invalid={Boolean(fieldErrors.email)}
+                  aria-describedby={fieldErrors.email ? 'home-email-error' : undefined}
                   required 
                 />
+                {fieldErrors.email && <span id="home-email-error" className="form-field-error">{fieldErrors.email}</span>}
 
-                <input 
+                <label className="sr-only" htmlFor="home-contact-phone">Phone number</label>
+                <input
+                  id="home-contact-phone"
                   type="tel" 
                   name="phone" 
                   value={formData.phone}
                   onChange={handleChange}
                   className="modern-input-field" 
                   placeholder="Phone Number" 
+                  autoComplete="tel"
+                  inputMode="tel"
+                  maxLength={CONTACT_LIMITS.phone}
+                  aria-invalid={Boolean(fieldErrors.phone)}
+                  aria-describedby={fieldErrors.phone ? 'home-phone-error' : undefined}
                   required 
                 />
+                {fieldErrors.phone && <span id="home-phone-error" className="form-field-error">{fieldErrors.phone}</span>}
                 
+                <label className="sr-only" htmlFor="home-contact-message">Project goals</label>
                 <textarea 
+                  id="home-contact-message"
                   name="message" 
                   value={formData.message}
                   onChange={handleChange}
                   className="modern-input-field" 
                   placeholder="Tell us about your project goals..." 
                   rows="4" 
+                  minLength="20"
+                  maxLength={CONTACT_LIMITS.message}
+                  aria-invalid={Boolean(fieldErrors.message)}
+                  aria-describedby={fieldErrors.message ? 'home-message-error' : undefined}
                   required 
                   style={{ resize: 'none' }}
                 ></textarea>
+                {fieldErrors.message && <span id="home-message-error" className="form-field-error">{fieldErrors.message}</span>}
+                <div className="contact-honeypot" aria-hidden="true"><label htmlFor="home-contact-website">Website</label><input id="home-contact-website" name="website" value={formData.website} onChange={handleChange} tabIndex="-1" autoComplete="off" /></div>
+                <Turnstile onToken={setTurnstileToken} resetSignal={turnstileReset} />
                 
                 <button 
                   type="submit" 

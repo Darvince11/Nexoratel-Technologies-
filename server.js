@@ -4,7 +4,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import express from 'express';
+import cors from 'cors';
 import nodemailer from 'nodemailer';
+import { validateContactInput } from './src/lib/contactValidation.js';
+import { verifyTurnstileToken } from './lib/turnstile.js';
 
 dotenv.config({ path: '.env.local' });
 dotenv.config();
@@ -15,6 +18,11 @@ const groqModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(rootDir, 'dist');
 const siteUrl = 'https://nexorateltechnologies.com';
+const allowedOrigins = new Set([
+  siteUrl,
+  'https://www.nexorateltechnologies.com',
+  ...String(process.env.CORS_ORIGIN || '').split(',').map((origin) => origin.trim()).filter(Boolean),
+]);
 
 const routeMetadata = {
   '/': ['Software Development Company in Ghana | Nexoratel Technologies', 'Nexoratel Technologies is a software development company in Tema, Ghana, building custom software, mobile apps, cloud infrastructure, and business systems.'],
@@ -29,11 +37,27 @@ const routeMetadata = {
   '/industries/healthcare': ['Healthcare Software Solutions in Ghana | Nexoratel', 'Explore hospital management, patient portal, laboratory integration, and telemedicine software solutions for healthcare providers in Ghana.'],
   '/industries/retail': ['Retail and E-Commerce Software in Ghana | Nexoratel', 'Explore POS, inventory, e-commerce, loyalty, and retail operations software for Ghanaian retailers and growing brands.'],
   '/contact': ['Contact a Software Company in Tema, Ghana | Nexoratel', 'Contact Nexoratel Technologies in Tema, Ghana to discuss custom software, mobile apps, cloud infrastructure, or business management systems.'],
+  '/blog': ['Technology Insights & Engineering Blog | Nexoratel', 'Read practical insights from Nexoratel Technologies on software engineering, cloud architecture, cybersecurity, mobile development, and digital strategy.'],
+  '/blog/software-development-company-ghana': ['Software Development Company in Ghana | Custom Software', 'Looking for a software development company in Ghana? Discover how custom software can automate operations, improve efficiency and help your business grow with Nexoratel Technologies.'],
+  '/blog/how-much-does-a-website-cost-in-ghana': ['How Much Does a Website Cost in Ghana? 2026 Prices', 'How much does a website cost in Ghana? Discover website design prices, what affects development costs, and professional websites from Nexoratel Technologies starting at GH₵2,000.'],
+  '/blog/future-of-cloud-architecture-2026': ['The Future of Cloud Architecture in 2026 | Nexoratel', 'Explore serverless platforms, multi-cloud resilience, and cost management strategies for modern enterprise cloud architecture.'],
+  '/blog/securing-enterprise-apis-against-advanced-threats': ['Securing Enterprise APIs Against Advanced Threats | Nexoratel', 'A practical guide to zero-trust access, token security, abuse prevention, and continuous testing for enterprise APIs.'],
+  '/blog/cross-platform-mobile-app-performance-secrets': ['Cross-Platform Mobile App Performance | Nexoratel', 'Learn how to keep React Native and Flutter apps responsive across real-world devices, workloads, and mobile networks.'],
   '/terms': ['Terms of Service | Nexoratel Technologies', 'Read the terms governing Nexoratel Technologies software engineering services and digital products.'],
   '/aml-policy': ['AML Policy | Nexoratel Technologies', 'Read the Nexoratel Technologies anti-money laundering policy for financial technology and enterprise solutions.'],
+  '/accessibility': ['Accessibility Statement | Nexoratel Technologies', 'Read how Nexoratel Technologies works to make its website accessible to people with disabilities and how to request assistance.'],
+  '/cookie-policy': ['Cookie Policy | Nexoratel Technologies', 'Learn how Nexoratel Technologies uses cookies and browser storage, and manage your analytics and marketing preferences.'],
 };
 
-const placeholderPaths = new Set(['/who-we-are', '/why-choose-us', '/careers', '/faqs']);
+const placeholderPaths = new Set(['/careers', '/faqs']);
+const legacyRedirects = new Map([['/who-we-are', '/about'], ['/why-choose-us', '/about']]);
+const blogDetails = {
+  '/blog/software-development-company-ghana': ['2026-09-09', 'Nexoratel Editorial Team', '/blog-software-development-company-ghana.png'],
+  '/blog/how-much-does-a-website-cost-in-ghana': ['2026-09-09', 'Nexoratel Editorial Team', '/blog-website-cost-ghana-2026.png'],
+  '/blog/future-of-cloud-architecture-2026': ['2026-06-12', 'Daniel Baisel', '/blog-engineering-team.png'],
+  '/blog/securing-enterprise-apis-against-advanced-threats': ['2026-05-28', 'Nexoratel Security Team', '/blog-engineering-team.png'],
+  '/blog/cross-platform-mobile-app-performance-secrets': ['2026-05-14', 'Nexoratel Mobile Team', '/blog-engineering-team.png'],
+};
 
 const escapeHtml = (value) => value.replace(/[&<>"']/g, (character) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -47,6 +71,15 @@ function schemaFor(pathname, title, description) {
       email: 'info@nexorateltechnologies.com', telephone: '+233545059232',
       address: { '@type': 'PostalAddress', streetAddress: 'Community 6', addressLocality: 'Tema', addressRegion: 'Greater Accra', addressCountry: 'GH' },
       areaServed: { '@type': 'Country', name: 'Ghana' },
+    };
+  }
+  if (blogDetails[pathname]) {
+    const [datePublished, author, image] = blogDetails[pathname];
+    return {
+      '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title.split('|')[0].trim(),
+      description, datePublished, author: { '@type': 'Person', name: author },
+      publisher: { '@id': `${siteUrl}/#organization` }, mainEntityOfPage: `${siteUrl}${pathname}`,
+      image: `${siteUrl}${image}`,
     };
   }
   if (pathname.startsWith('/services/') || pathname.startsWith('/products/') || pathname.startsWith('/industries/')) {
@@ -65,6 +98,7 @@ function renderIndex(template, pathname, status) {
   const noindex = status === 404 || placeholderPaths.has(pathname);
   const canonical = `${siteUrl}${pathname === '/' ? '' : pathname}`;
   const schema = schemaFor(pathname, title, description);
+  const socialImage = blogDetails[pathname] ? `${siteUrl}${blogDetails[pathname][2]}` : `${siteUrl}/favicon.png`;
   let html = template
     .replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(title)}</title>`)
     .replace(/<meta name="description" content=".*?"\s*\/>/s, `<meta name="description" content="${escapeHtml(description)}" />`)
@@ -73,8 +107,10 @@ function renderIndex(template, pathname, status) {
     .replace(/<meta property="og:title" content=".*?"\s*\/>/s, `<meta property="og:title" content="${escapeHtml(title)}" />`)
     .replace(/<meta property="og:description" content=".*?"\s*\/>/s, `<meta property="og:description" content="${escapeHtml(description)}" />`)
     .replace(/<meta property="og:url" content=".*?"\s*\/>/s, `<meta property="og:url" content="${canonical}" />`)
+    .replace(/<meta property="og:image" content=".*?"\s*\/>/s, `<meta property="og:image" content="${socialImage}" />`)
     .replace(/<meta name="twitter:title" content=".*?"\s*\/>/s, `<meta name="twitter:title" content="${escapeHtml(title)}" />`)
-    .replace(/<meta name="twitter:description" content=".*?"\s*\/>/s, `<meta name="twitter:description" content="${escapeHtml(description)}" />`);
+    .replace(/<meta name="twitter:description" content=".*?"\s*\/>/s, `<meta name="twitter:description" content="${escapeHtml(description)}" />`)
+    .replace(/<meta name="twitter:image" content=".*?"\s*\/>/s, `<meta name="twitter:image" content="${socialImage}" />`);
   if (schema) {
     html = html.replace(/<script id="route-schema" type="application\/ld\+json">.*?<\/script>/s, `<script id="route-schema" type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>`);
   } else {
@@ -85,6 +121,14 @@ function renderIndex(template, pathname, status) {
 
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
+app.use('/api', cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+    return callback(new Error('Origin not allowed by CORS'));
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+}));
 app.use(express.json({ limit: '32kb' }));
 app.use((_, res, next) => {
   res.set({
@@ -97,6 +141,9 @@ app.use((_, res, next) => {
 });
 
 app.use((req, res, next) => {
+  if (req.method === 'GET' && legacyRedirects.has(req.path)) {
+    return res.redirect(301, `${legacyRedirects.get(req.path)}${req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''}`);
+  }
   if (req.hostname === 'www.nexorateltechnologies.com') {
     return res.redirect(301, `${siteUrl}${req.originalUrl}`);
   }
@@ -134,18 +181,20 @@ function createRateLimiter({ windowMs, limit }) {
 
 const contactLimiter = createRateLimiter({ windowMs: 15 * 60 * 1000, limit: 5 });
 const chatLimiter = createRateLimiter({ windowMs: 5 * 60 * 1000, limit: 20 });
-const cleanText = (value, maxLength) =>
-  typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
-const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
+const cleanText = (value, maxLength) => typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
 
 app.post('/api/contact', contactLimiter, async (req, res) => {
-  const name = cleanText(req.body?.name, 100);
-  const email = cleanText(req.body?.email, 254);
-  const phone = cleanText(req.body?.phone, 40);
-  const message = cleanText(req.body?.message, 5000);
-  if (!name || !isEmail(email) || !message) {
-    return res.status(400).json({ error: 'Please provide a valid name, email address, and message.' });
+  const { data, errors, isValid } = validateContactInput(req.body);
+  if (data.website) return res.json({ success: true });
+  try {
+    const verified = await verifyTurnstileToken(req.body?.turnstileToken, req.ip);
+    if (!verified) return res.status(400).json({ error: 'Security verification failed. Please try again.' });
+  } catch (error) {
+    console.error('Turnstile verification error:', error.message);
+    return res.status(503).json({ error: 'Security verification is temporarily unavailable. Please try again.' });
   }
+  if (!isValid) return res.status(400).json({ error: 'Please correct the highlighted fields.', errors });
+  const { name, email, phone, message } = data;
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.error('Contact API: SMTP_USER or SMTP_PASS is missing.');
     return res.status(503).json({ error: 'The contact service is temporarily unavailable.' });

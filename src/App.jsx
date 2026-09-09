@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
 import ChatWidget from './components/ChatWidget';
 import RouteSeo from './components/RouteSeo';
+import CookieConsent from './components/CookieConsent';
+import GoogleAnalytics from './components/GoogleAnalytics';
 
 // Pages
 import Home from './pages/Home';
@@ -14,12 +16,14 @@ import Industries from './pages/Industries';
 import IndustryDetails from './pages/IndustryDetails';
 import ProductPage from './pages/ProductPage'; 
 // import Testimonials from './pages/Testimonials'; // Hidden until ready
-// import Blog from './pages/Blog';                 // Hidden until ready
+import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';           
 import AmlPolicy from './pages/AmlPolicy';   
 import GhanaLandingPage from './pages/GhanaLandingPage';
 import NotFound from './pages/NotFound';
+import AccessibilityStatement from './pages/AccessibilityStatement';
+import CookiePolicy from './pages/CookiePolicy';
 
 // A helper to scroll to top on route change
 function ScrollToTop() {
@@ -43,6 +47,7 @@ export default function App() {
     <Router>
       <ScrollToTop />
       <RouteSeo />
+      <GoogleAnalytics />
       <Navbar />
       <Routes>
         {/* Core Main Pages */}
@@ -56,19 +61,22 @@ export default function App() {
         <Route path="/products" element={<ProductPage />} />
         <Route path="/products/school-management-system-ghana" element={<GhanaLandingPage page="schoolSystem" />} />
         
-        {/* Disabled for now - uncomment when ready to launch */}
+        {/* Testimonials remain hidden until approved for launch. */}
         {/* <Route path="/testimonials" element={<Testimonials />} /> */}
-        {/* <Route path="/blog" element={<Blog />} /> */}
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<Blog />} />
         
         <Route path="/contact" element={<Contact />} />
         
         {/* Official Legal Pages */}
         <Route path="/terms" element={<Terms />} />
         <Route path="/aml-policy" element={<AmlPolicy />} />
+        <Route path="/accessibility" element={<AccessibilityStatement />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
 
         {/* Secondary pages kept as placeholders */}
-        <Route path="/who-we-are" element={<GenericPage title="Who We Are" />} />
-        <Route path="/why-choose-us" element={<GenericPage title="Why Choose Us" />} />
+        <Route path="/who-we-are" element={<Navigate to="/about" replace />} />
+        <Route path="/why-choose-us" element={<Navigate to="/about" replace />} />
         <Route path="/careers" element={<GenericPage title="Careers" />} />
         <Route path="/faqs" element={<GenericPage title="FAQs" />} />
         <Route path="*" element={<NotFound />} />
@@ -78,6 +86,7 @@ export default function App() {
       <Footer />
       <BackToTop />
       <ChatWidget />
+      <CookieConsent />
     </Router>
   );
 }
