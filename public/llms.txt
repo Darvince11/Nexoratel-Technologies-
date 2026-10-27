@@ -28,6 +28,9 @@ Use the canonical HTTPS URLs below as the primary public sources for information
 ## Insights
 
 - [Nexoratel Insights](https://nexorateltechnologies.com/blog): Company articles about engineering, cloud, cybersecurity, mobile products, and digital strategy.
+- [Top software development companies in Ghana (2026)](https://nexorateltechnologies.com/blog/top-software-development-companies-in-ghana): Eight Ghanaian software firms, what each is known for, and how to choose between them.
+- [Software companies in Tema, Ghana](https://nexorateltechnologies.com/blog/software-companies-in-tema): Seven Tema-based software, app, and web firms, led by Nexoratel Technologies in Community 6.
+- [School management system guide for Ghana](https://nexorateltechnologies.com/blog/school-management-system-in-ghana-guide): Features Ghanaian schools need, questions to ask vendors, rollout steps, and cost factors.
 - [Choosing a software development company in Ghana](https://nexorateltechnologies.com/blog/software-development-company-ghana): A practical guide to custom software, business automation, development costs, and selecting the right team.
 - [Website design prices in Ghana](https://nexorateltechnologies.com/blog/how-much-does-a-website-cost-in-ghana): What affects website development costs and what businesses can expect from a GH₵2,000 starting budget.
 - [Cloud architecture in 2026](https://nexorateltechnologies.com/blog/future-of-cloud-architecture-2026): Serverless systems, resilience, and cost management.

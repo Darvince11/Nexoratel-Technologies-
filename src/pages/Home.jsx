@@ -523,9 +523,9 @@ export default function Home() {
         </div>
         <div className="grid-3">
           {[
-            ['Software Development', 'Software Development Company in Ghana: How to Choose the Right Team', 'software-development-company-ghana'],
-            ['Website Development', 'How Much Does a Website Cost in Ghana? 2026 Prices', 'how-much-does-a-website-cost-in-ghana'],
-            ['Cybersecurity', 'Securing Enterprise APIs Against Advanced Threats', 'securing-enterprise-apis-against-advanced-threats']
+            ['Software Development', 'Top Software Development Companies in Ghana (2026)', 'top-software-development-companies-in-ghana'],
+            ['Software Development', 'Software Companies in Tema, Ghana: 7 Firms Worth Knowing', 'software-companies-in-tema'],
+            ['Education Technology', 'School Management System in Ghana: A Practical Guide', 'school-management-system-in-ghana-guide']
           ].map(([category, title, slug]) => (
             <article key={slug} style={{ borderTop: '2px solid var(--brand-blue)', padding: '24px 0' }}>
               <span style={{ color: '#0284c7', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>{category}</span>

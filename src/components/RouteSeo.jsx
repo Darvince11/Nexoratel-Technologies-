@@ -67,6 +67,21 @@ const pages = {
     title: 'Technology Insights & Engineering Blog | Nexoratel',
     description: 'Read practical insights from Nexoratel Technologies on software engineering, cloud architecture, cybersecurity, mobile development, and digital strategy.',
   },
+  '/blog/top-software-development-companies-in-ghana': {
+    title: 'Top Software Development Companies in Ghana (2026)',
+    description: 'Compare the top software development companies in Ghana for 2026, including SOFTtribe, Nexoratel Technologies, IT Consortium, and Hubtel, and learn how to choose one.',
+    image: `${SITE_URL}/blog-engineering-team.png`,
+  },
+  '/blog/software-companies-in-tema': {
+    title: 'Software Companies in Tema, Ghana (2026) | Nexoratel',
+    description: 'Looking for a software company in Tema? Compare seven Tema firms building custom software, mobile apps, and websites, led by Nexoratel Technologies in Community 6.',
+    image: `${SITE_URL}/blog-engineering-team.png`,
+  },
+  '/blog/school-management-system-in-ghana-guide': {
+    title: 'School Management System in Ghana: Practical Guide',
+    description: 'What a school management system does, the features Ghanaian schools need, from fees and Mobile Money to report cards, and how to choose and roll one out.',
+    image: `${SITE_URL}/blog-engineering-team.png`,
+  },
   '/blog/software-development-company-ghana': {
     title: 'Software Development Company in Ghana | Custom Software',
     description: 'Looking for a software development company in Ghana? Discover how custom software can automate operations, improve efficiency and help your business grow with Nexoratel Technologies.',
@@ -130,6 +145,9 @@ const serviceSchema = (page, path) => ({
 });
 
 const articleDetails = {
+  '/blog/top-software-development-companies-in-ghana': ['2026-10-27', 'Nexoratel Editorial Team', '/blog-engineering-team.png'],
+  '/blog/software-companies-in-tema': ['2026-10-27', 'Nexoratel Editorial Team', '/blog-engineering-team.png'],
+  '/blog/school-management-system-in-ghana-guide': ['2026-10-27', 'Nexoratel Editorial Team', '/blog-engineering-team.png'],
   '/blog/software-development-company-ghana': ['2026-09-09', 'Nexoratel Editorial Team', '/blog-software-development-company-ghana.png'],
   '/blog/how-much-does-a-website-cost-in-ghana': ['2026-09-09', 'Nexoratel Editorial Team', '/blog-website-cost-ghana-2026.png'],
   '/blog/future-of-cloud-architecture-2026': ['2026-06-12', 'Daniel Baisel'],
@@ -143,7 +161,7 @@ const articleSchema = (page, path) => ({
   headline: page.title.split('|')[0].trim(),
   description: page.description,
   datePublished: articleDetails[path][0],
-  author: { '@type': 'Person', name: articleDetails[path][1] },
+  author: { '@type': articleDetails[path][1].endsWith('Team') ? 'Organization' : 'Person', name: articleDetails[path][1] },
   publisher: { '@id': `${SITE_URL}/#organization` },
   mainEntityOfPage: `${SITE_URL}${path}`,
   image: `${SITE_URL}${articleDetails[path][2] || '/blog-engineering-team.png'}`,

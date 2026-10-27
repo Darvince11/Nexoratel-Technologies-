@@ -90,6 +90,7 @@ const PAGE_DATA = {
       ['Will staff receive training?', 'Implementation should include administrator and staff training, supporting documentation, a pilot period, and a clear support process for operational questions.'],
     ],
     related: [
+      ['/blog/school-management-system-in-ghana-guide', 'Read our guide to choosing a school management system'],
       ['/services/custom-software-development-ghana', 'Learn about custom software engineering'],
       ['/contact', 'Discuss your school’s requirements'],
     ],

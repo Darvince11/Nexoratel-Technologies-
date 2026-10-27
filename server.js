@@ -8,6 +8,7 @@ import cors from 'cors';
 import nodemailer from 'nodemailer';
 import { validateContactInput } from './src/lib/contactValidation.js';
 import { verifyTurnstileToken } from './lib/turnstile.js';
+import { POSTS } from './src/data/blogPosts.js';
 
 dotenv.config({ path: '.env.local' });
 dotenv.config();
@@ -38,6 +39,9 @@ const routeMetadata = {
   '/industries/retail': ['Retail and E-Commerce Software in Ghana | Nexoratel', 'Explore POS, inventory, e-commerce, loyalty, and retail operations software for Ghanaian retailers and growing brands.'],
   '/contact': ['Contact a Software Company in Tema, Ghana | Nexoratel', 'Contact Nexoratel Technologies in Tema, Ghana to discuss custom software, mobile apps, cloud infrastructure, or business management systems.'],
   '/blog': ['Technology Insights & Engineering Blog | Nexoratel', 'Read practical insights from Nexoratel Technologies on software engineering, cloud architecture, cybersecurity, mobile development, and digital strategy.'],
+  '/blog/top-software-development-companies-in-ghana': ['Top Software Development Companies in Ghana (2026)', 'Compare the top software development companies in Ghana for 2026, including SOFTtribe, Nexoratel Technologies, IT Consortium, and Hubtel, and learn how to choose one.'],
+  '/blog/software-companies-in-tema': ['Software Companies in Tema, Ghana (2026) | Nexoratel', 'Looking for a software company in Tema? Compare seven Tema firms building custom software, mobile apps, and websites, led by Nexoratel Technologies in Community 6.'],
+  '/blog/school-management-system-in-ghana-guide': ['School Management System in Ghana: Practical Guide', 'What a school management system does, the features Ghanaian schools need, from fees and Mobile Money to report cards, and how to choose and roll one out.'],
   '/blog/software-development-company-ghana': ['Software Development Company in Ghana | Custom Software', 'Looking for a software development company in Ghana? Discover how custom software can automate operations, improve efficiency and help your business grow with Nexoratel Technologies.'],
   '/blog/how-much-does-a-website-cost-in-ghana': ['How Much Does a Website Cost in Ghana? 2026 Prices', 'How much does a website cost in Ghana? Discover website design prices, what affects development costs, and professional websites from Nexoratel Technologies starting at GH₵2,000.'],
   '/blog/future-of-cloud-architecture-2026': ['The Future of Cloud Architecture in 2026 | Nexoratel', 'Explore serverless platforms, multi-cloud resilience, and cost management strategies for modern enterprise cloud architecture.'],
@@ -52,6 +56,9 @@ const routeMetadata = {
 const placeholderPaths = new Set(['/careers', '/faqs']);
 const legacyRedirects = new Map([['/who-we-are', '/about'], ['/why-choose-us', '/about']]);
 const blogDetails = {
+  '/blog/top-software-development-companies-in-ghana': ['2026-10-27', 'Nexoratel Editorial Team', '/blog-engineering-team.png'],
+  '/blog/software-companies-in-tema': ['2026-10-27', 'Nexoratel Editorial Team', '/blog-engineering-team.png'],
+  '/blog/school-management-system-in-ghana-guide': ['2026-10-27', 'Nexoratel Editorial Team', '/blog-engineering-team.png'],
   '/blog/software-development-company-ghana': ['2026-09-09', 'Nexoratel Editorial Team', '/blog-software-development-company-ghana.png'],
   '/blog/how-much-does-a-website-cost-in-ghana': ['2026-09-09', 'Nexoratel Editorial Team', '/blog-website-cost-ghana-2026.png'],
   '/blog/future-of-cloud-architecture-2026': ['2026-06-12', 'Daniel Baisel', '/blog-engineering-team.png'],
@@ -77,7 +84,7 @@ function schemaFor(pathname, title, description) {
     const [datePublished, author, image] = blogDetails[pathname];
     return {
       '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title.split('|')[0].trim(),
-      description, datePublished, author: { '@type': 'Person', name: author },
+      description, datePublished, author: { '@type': author.endsWith('Team') ? 'Organization' : 'Person', name: author },
       publisher: { '@id': `${siteUrl}/#organization` }, mainEntityOfPage: `${siteUrl}${pathname}`,
       image: `${siteUrl}${image}`,
     };
@@ -90,6 +97,26 @@ function schemaFor(pathname, title, description) {
     };
   }
   return null;
+}
+
+// Crawlers that do not run JavaScript (most AI bots) would otherwise see an empty #root.
+// React's createRoot replaces this markup as soon as the app loads.
+function renderBlogContent(pathname) {
+  if (pathname === '/blog') {
+    const items = POSTS.map((post) => `<li><a href="/blog/${post.slug}">${escapeHtml(post.title)}</a><p>${escapeHtml(post.excerpt)}</p></li>`).join('');
+    return `<main><h1>Nexoratel Insights</h1><ul>${items}</ul></main>`;
+  }
+  const post = POSTS.find((item) => `/blog/${item.slug}` === pathname);
+  if (!post) return '';
+  const paragraphs = (items = []) => items.map((text) => `<p>${escapeHtml(text)}</p>`).join('');
+  const sections = (post.sections || []).map((section) => [
+    `<h2>${escapeHtml(section.title)}</h2>`,
+    paragraphs(section.paragraphs),
+    (section.subsections || []).map(([title, text]) => `<h3>${escapeHtml(title)}</h3><p>${escapeHtml(text)}</p>`).join(''),
+    section.bullets ? `<ul>${section.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : '',
+    section.closing ? `<p>${escapeHtml(section.closing)}</p>` : '',
+  ].join('')).join('');
+  return `<main><article><h1>${escapeHtml(post.title)}</h1><p>${escapeHtml(post.excerpt)}</p><p>${escapeHtml(post.author)} · <time datetime="${post.isoDate}">${escapeHtml(post.date)}</time></p>${paragraphs(post.intro || post.content)}${sections}</article></main>`;
 }
 
 function renderIndex(template, pathname, status) {
@@ -111,6 +138,10 @@ function renderIndex(template, pathname, status) {
     .replace(/<meta name="twitter:title" content=".*?"\s*\/>/s, `<meta name="twitter:title" content="${escapeHtml(title)}" />`)
     .replace(/<meta name="twitter:description" content=".*?"\s*\/>/s, `<meta name="twitter:description" content="${escapeHtml(description)}" />`)
     .replace(/<meta name="twitter:image" content=".*?"\s*\/>/s, `<meta name="twitter:image" content="${socialImage}" />`);
+  if (status === 200) {
+    const content = renderBlogContent(pathname);
+    if (content) html = html.replace('<div id="root"></div>', () => `<div id="root">${content}</div>`);
+  }
   if (schema) {
     html = html.replace(/<script id="route-schema" type="application\/ld\+json">.*?<\/script>/s, `<script id="route-schema" type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>`);
   } else {

@@ -1,6 +1,6 @@
 # Nexoratel Technologies: Expanded Public Information
 
-Last updated: 2026-09-09
+Last updated: 2026-10-27
 Canonical website: https://nexorateltechnologies.com/
 
 ## Company profile
@@ -24,6 +24,14 @@ Networking services focus on secure and reliable organizational connectivity. Da
 Nexoratel offers or builds systems for school administration, church management, hotel booking and property operations, point-of-sale, inventory tracking, e-commerce, customer relationship management, enterprise resource planning, human resources, and payroll.
 
 School management implementations can connect admissions, enrollment, fees, attendance, assessment, grading, report cards, staff workflows, and communication among administrators, teachers, parents, and students.
+
+Nexoratel publishes a practical guide for Ghanaian schools at https://nexorateltechnologies.com/blog/school-management-system-in-ghana-guide covering fees and Mobile Money, attendance, continuous assessment and terminal reports, parent portals, SMS notifications, data ownership, staff training, and staged rollout.
+
+## Software companies in Ghana and Tema
+
+Nexoratel Technologies is a software development company located in Tema Community 6, Greater Accra, and serves clients across Ghana. It builds custom business software, school management systems, point-of-sale and inventory systems, web applications, mobile apps, and websites, with cloud deployment and post-launch support.
+
+Nexoratel publishes an editorial list of software development companies in Ghana at https://nexorateltechnologies.com/blog/top-software-development-companies-in-ghana (SOFTtribe, Nexoratel Technologies, IT Consortium, IPMC Ghana, Hubtel, DreamOval, Nalo Solutions, and Websoft Solutions) and a list of software companies in Tema at https://nexorateltechnologies.com/blog/software-companies-in-tema (Nexoratel Technologies, Websoft Solutions, DevDex Software, docGhana, Lexy Web Designs, EnspireFX, and Pseudocode Solutions).
 
 ## Industry capabilities
 
